@@ -1,0 +1,206 @@
+shop: М.Видео
+categories:
+  - id: 224
+    name: Смартфоны
+  - id: 15
+    name: Аксессуары
+  - id: 1
+    name: Flash-накопители
+  - id: 5
+    name: Телевизоры
+  - id: 10
+    name: Ноутбуки
+  - id: 20
+    name: Планшеты
+
+goods:
+  - id: 5001001
+    category: 224
+    model: apple/iphone/14-pro
+    name: Смартфон Apple iPhone 14 Pro 128GB (фиолетовый)
+    price: 120000
+    price_rrc: 124990
+    quantity: 8
+    parameters:
+      "Диагональ (дюйм)": 6.1
+      "Разрешение (пикс)": 2556x1179
+      "Встроенная память (Гб)": 128
+      "Цвет": фиолетовый
+  - id: 5001002
+    category: 224
+    model: samsung/galaxy-s23
+    name: Смартфон Samsung Galaxy S23 256GB (белый)
+    price: 85000
+    price_rrc: 89990
+    quantity: 12
+    parameters:
+      "Диагональ (дюйм)": 6.1
+      "Разрешение (пикс)": 2340x1080
+      "Встроенная память (Гб)": 256
+      "Цвет": белый
+  - id: 5001003
+    category: 224
+    model: xiaomi/redmi-note-12
+    name: Смартфон Xiaomi Redmi Note 12 128GB (синий)
+    price: 25000
+    price_rrc: 27990
+    quantity: 20
+    parameters:
+      "Диагональ (дюйм)": 6.67
+      "Разрешение (пикс)": 2400x1080
+      "Встроенная память (Гб)": 128
+      "Цвет": синий
+  - id: 5001004
+    category: 224
+    model: huawei/p50-pro
+    name: Смартфон Huawei P50 Pro 256GB (золотой)
+    price: 75000
+    price_rrc: 79990
+    quantity: 6
+    parameters:
+      "Диагональ (дюйм)": 6.6
+      "Разрешение (пикс)": 2700x1228
+      "Встроенная память (Гб)": 256
+      "Цвет": золотой
+  - id: 5002001
+    category: 10
+    model: apple/macbook-air-m2
+    name: Ноутбук Apple MacBook Air 13" M2 256GB (серебристый)
+    price: 140000
+    price_rrc: 149990
+    quantity: 5
+    parameters:
+      "Диагональ (дюйм)": 13.6
+      "Процессор": Apple M2
+      "Память (Гб)": 8
+      "Накопитель (Гб)": 256
+      "Цвет": серебристый
+  - id: 5002002
+    category: 10
+    model: lenovo/thinkpad-x1-carbon
+    name: Ноутбук Lenovo ThinkPad X1 Carbon 14" 512GB (черный)
+    price: 180000
+    price_rrc: 189990
+    quantity: 3
+    parameters:
+      "Диагональ (дюйм)": 14
+      "Процессор": Intel Core i7
+      "Память (Гб)": 16
+      "Накопитель (Гб)": 512
+      "Цвет": черный
+  - id: 5002003
+    category: 10
+    model: asus/zenbook-14
+    name: Ноутбук ASUS ZenBook 14 512GB (синий)
+    price: 95000
+    price_rrc: 99990
+    quantity: 7
+    parameters:
+      "Диагональ (дюйм)": 14
+      "Процессор": AMD Ryzen 7
+      "Память (Гб)": 16
+      "Накопитель (Гб)": 512
+      "Цвет": синий
+  - id: 5003001
+    category: 20
+    model: apple/ipad-air
+    name: Планшет Apple iPad Air 64GB Wi-Fi (розовый)
+    price: 65000
+    price_rrc: 69990
+    quantity: 10
+    parameters:
+      "Диагональ (дюйм)": 10.9
+      "Разрешение (пикс)": 2360x1640
+      "Встроенная память (Гб)": 64
+      "Цвет": розовый
+  - id: 5003002
+    category: 20
+    model: samsung/galaxy-tab-s8
+    name: Планшет Samsung Galaxy Tab S8 128GB (серый)
+    price: 55000
+    price_rrc: 59990
+    quantity: 8
+    parameters:
+      "Диагональ (дюйм)": 11
+      "Разрешение (пикс)": 2560x1600
+      "Встроенная память (Гб)": 128
+      "Цвет": серый
+  - id: 5004001
+    category: 15
+    model: apple/airpods-pro-2
+    name: Наушники Apple AirPods Pro 2-го поколения (белый)
+    price: 28000
+    price_rrc: 29990
+    quantity: 15
+    parameters:
+      "Тип": беспроводные
+      "Шумоподавление": да
+      "Цвет": белый
+  - id: 5004002
+    category: 15
+    model: sony/wh-1000xm5
+    name: Наушники Sony WH-1000XM5 (черный)
+    price: 35000
+    price_rrc: 37990
+    quantity: 12
+    parameters:
+      "Тип": накладные
+      "Шумоподавление": да
+      "Цвет": черный
+  - id: 5004003
+    category: 15
+    model: anker/powerbank-20000
+    name: Внешний аккумулятор Anker PowerCore 20000mAh (черный)
+    price: 4500
+    price_rrc: 4990
+    quantity: 25
+    parameters:
+      "Емкость (мАч)": 20000
+      "Быстрая зарядка": да
+      "Цвет": черный
+  - id: 5005001
+    category: 1
+    model: samsung/usb-c-128gb
+    name: USB Flash Drive Samsung USB-C 128GB (серебристый)
+    price: 2500
+    price_rrc: 2990
+    quantity: 30
+    parameters:
+      "Емкость (Гб)": 128
+      "Интерфейс": USB-C
+      "Цвет": серебристый
+  - id: 5005002
+    category: 1
+    model: transcend/jetflash-64gb
+    name: USB Flash Drive Transcend JetFlash 64GB (черный)
+    price: 1200
+    price_rrc: 1490
+    quantity: 40
+    parameters:
+      "Емкость (Гб)": 64
+      "Интерфейс": USB 3.0
+      "Цвет": черный
+  - id: 5006001
+    category: 5
+    model: lg/oled-c3-55
+    name: Телевизор LG OLED C3 55" 4K Smart TV (черный)
+    price: 180000
+    price_rrc: 189990
+    quantity: 4
+    parameters:
+      "Диагональ (дюйм)": 55
+      "Разрешение (пикс)": 3840x2160
+      "Smart TV": да
+      "Цвет": черный
+  - id: 5006002
+    category: 5
+    model: samsung/neo-qled-65
+    name: Телевизор Samsung Neo QLED 65" 4K Smart TV (серебристый)
+    price: 220000
+    price_rrc: 229990
+    quantity: 3
+    parameters:
+      "Диагональ (дюйм)": 65
+      "Разрешение (пикс)": 3840x2160
+      "Smart TV": да
+      "Цвет": серебристый
