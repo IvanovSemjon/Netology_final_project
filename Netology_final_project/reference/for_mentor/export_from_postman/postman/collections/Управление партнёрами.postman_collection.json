@@ -2,9 +2,7 @@
   "info": {
     "_postman_id": "c38ef57f-c69c-4b5d-a794-f0a85dd6ca76",
     "name": "Управление партнёрами",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "47968633",
-    "_collection_link": "https://semen-ivanov-s-team.postman.co/workspace/b7f51170-c3cb-4f46-8fee-e1123d81e884/collection/47968633-c38ef57f-c69c-4b5d-a794-f0a85dd6ca76?action=share&source=collection_link&creator=47968633"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
@@ -27,7 +25,6 @@
           ]
         },
         "method": "GET",
-        "header": [],
         "url": {
           "raw": "http://127.0.0.1:8000/api/v1/partner/state/",
           "protocol": "http",
@@ -46,8 +43,7 @@
             ""
           ]
         }
-      },
-      "response": []
+      }
     },
     {
       "name": "Изменение статуса магазина",
@@ -69,7 +65,6 @@
           ]
         },
         "method": "POST",
-        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"state\": \"true\"}",
@@ -97,8 +92,7 @@
             ""
           ]
         }
-      },
-      "response": []
+      }
     },
     {
       "name": "Корректировка прайса магазина",
@@ -120,7 +114,6 @@
           ]
         },
         "method": "POST",
-        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"url\": \"https://raw.githubusercontent.com/IvanovSemjon/Netology_final_project/refs/heads/main/Netology_final_project/reference/data/shop2.yaml\"}\r\n",
@@ -148,8 +141,7 @@
             ""
           ]
         }
-      },
-      "response": []
+      }
     },
     {
       "name": "Получение заказов магазина",
@@ -171,7 +163,6 @@
           ]
         },
         "method": "GET",
-        "header": [],
         "url": {
           "raw": "http://127.0.0.1:8000/api/v1/partner/orders/",
           "protocol": "http",
@@ -190,17 +181,57 @@
             ""
           ]
         }
-      },
-      "response": []
+      }
     },
     {
       "name": "Изменение статуса заказа",
       "id": "95b64f37-3e0b-41a1-8687-cf074dacb870",
       "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 0b2181c9b9c6129744d6fe0ada554875895745a5",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"order_id\": \"6\",\r\n  \"status\": \"confirmed\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/partner/orders/status/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "partner",
+            "orders",
+            "status",
+            ""
+          ]
+        }
+      }
     }
   ]
 }
