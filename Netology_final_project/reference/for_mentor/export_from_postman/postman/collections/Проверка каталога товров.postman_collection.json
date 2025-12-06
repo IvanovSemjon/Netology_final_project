@@ -1,0 +1,126 @@
+{
+  "info": {
+    "_postman_id": "eade554f-3258-488e-97fa-c69eb0fa5aba",
+    "name": "Проверка каталога товров",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47968633",
+    "_collection_link": "https://semen-ivanov-s-team.postman.co/workspace/b7f51170-c3cb-4f46-8fee-e1123d81e884/collection/47968633-eade554f-3258-488e-97fa-c69eb0fa5aba?action=share&source=collection_link&creator=47968633"
+  },
+  "item": [
+    {
+      "name": "Корневой эндпоинт API",
+      "id": "1cde8b5b-e520-4f10-939f-ebefe2b95860",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получить список категорий",
+      "id": "f522ef88-5280-43e2-b923-d52ff6b1b668",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/categories/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "categories",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получить список всех магазинов",
+      "id": "2cbc98a0-f204-41b0-a80f-2ed03a6561e6",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/shops/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "shops",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получить список всех товров",
+      "id": "e444df68-fcb7-4672-92dc-a22c3525b28a",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/products/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "products",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

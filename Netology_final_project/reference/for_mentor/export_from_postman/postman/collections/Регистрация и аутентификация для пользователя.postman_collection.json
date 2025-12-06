@@ -1,0 +1,165 @@
+{
+  "info": {
+    "_postman_id": "6f9d782a-475d-423c-bf54-820aa6526470",
+    "name": "Регистрация и аутентификация для пользователя",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47968633",
+    "_collection_link": "https://semen-ivanov-s-team.postman.co/workspace/b7f51170-c3cb-4f46-8fee-e1123d81e884/collection/47968633-6f9d782a-475d-423c-bf54-820aa6526470?action=share&source=collection_link&creator=47968633"
+  },
+  "item": [
+    {
+      "name": "Создать нового пользователя",
+      "id": "56808053-94c3-4fd4-a794-4c6c5af7f4db",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"first_name\": \"Тест_3\",\r\n    \"last_name\": \"Сидоров\",\r\n    \"email\": \"semjonurievichivanov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Банановая республика\",\r\n    \"position\": \"Тестировщик\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/register/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "register",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Подтверждение email",
+      "id": "c6b07ef6-a4fb-4c74-b7e2-66aeab6f6bf8",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"semjonurievichivanov@gmail.com\",\r\n    \"token\": \"23784ea4-d2f2-4fc5-bb4b-f393e0008263\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/register/confirm/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "register",
+            "confirm",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Вход в систему",
+      "id": "4d1d4e34-557f-438f-8040-26de5974cdaa",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"mvideo@yandex.ru\",\r\n    \"password\": \"Sambo2023!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/login/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "login",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Показать детали пользователя",
+      "id": "6b1b558e-9c41-4c11-aac5-701fc62877c7",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token f439c3ddb2a8032488892c05ef05942d6e0e9643",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/details/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "details",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

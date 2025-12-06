@@ -1,0 +1,357 @@
+{
+  "info": {
+    "_postman_id": "010c2ac3-ce63-4d23-b0e2-52687372f3db",
+    "name": "Работа с корзиной и заказами для пользователей",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47968633",
+    "_collection_link": "https://semen-ivanov-s-team.postman.co/workspace/b7f51170-c3cb-4f46-8fee-e1123d81e884/collection/47968633-010c2ac3-ce63-4d23-b0e2-52687372f3db?action=share&source=collection_link&creator=47968633"
+  },
+  "item": [
+    {
+      "name": "Добавление Добавление товаров к заказу",
+      "id": "a32ebfc2-fcac-47ed-8d1f-8d5163dcc91a",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 70eb10a00f9dfabe2751ef1989cb028a1f1f61fb",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"items\": \"[{\\\"product_info\\\":98, \\\"quantity\\\": 1}, {\\\"product_info\\\": 100, \\\"quantity\\\": 1}]\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/basket/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "basket",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Просмотр корзины",
+      "id": "53f37266-78ac-4860-b537-8c487c336edc",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 70eb10a00f9dfabe2751ef1989cb028a1f1f61fb",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/basket/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "basket",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Редактирование количества товаров корзины",
+      "id": "df4c2f0e-b0b7-402e-880d-2e1fc34fa760",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token f439c3ddb2a8032488892c05ef05942d6e0e9643",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\": \"[{\\\"id\\\": 1, \\\"quantity\\\": 1}, {\\\"id\\\": 2, \\\"quantity\\\": 1}, {\\\"id\\\": 3, \\\"quantity\\\": 1}]\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/basket/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "basket",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Удаление товаров из корзины",
+      "id": "e635eb7b-0c55-4ab1-bcb3-f5ea5886d5d8",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token f439c3ddb2a8032488892c05ef05942d6e0e9643",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\": \"1,2,3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/basket/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "basket",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создание контактов для доставки",
+      "id": "2cf74599-329b-416f-ae99-221e095f7448",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 70eb10a00f9dfabe2751ef1989cb028a1f1f61fb",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"city\": \"Домодедово\", \"street\": \"Мезенцева\", \"house\": \"1\", \"apartment\": \"1\", \"phone\": \"+79001234567\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/contact/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "contact",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Просмотр контактов для доставки",
+      "id": "5890000d-0833-4871-8220-7aca9b4a35d0",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 70eb10a00f9dfabe2751ef1989cb028a1f1f61fb",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/contact/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "contact",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Подтверхжение заказа",
+      "id": "ca111028-1d6a-43a4-b421-f4994390f1de",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 70eb10a00f9dfabe2751ef1989cb028a1f1f61fb",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"id\": \"5\", \"contact\": \"3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/order/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "order",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "info": {
+    "_postman_id": "c38ef57f-c69c-4b5d-a794-f0a85dd6ca76",
+    "name": "Управление партнёрами",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47968633",
+    "_collection_link": "https://semen-ivanov-s-team.postman.co/workspace/b7f51170-c3cb-4f46-8fee-e1123d81e884/collection/47968633-c38ef57f-c69c-4b5d-a794-f0a85dd6ca76?action=share&source=collection_link&creator=47968633"
+  },
+  "item": [
+    {
+      "name": "Получение информации по магазину",
+      "id": "69908d7d-bd17-4bc9-ba8f-5c66cb5030ae",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 0b2181c9b9c6129744d6fe0ada554875895745a5",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/partner/state/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "partner",
+            "state",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Изменение статуса магазина",
+      "id": "8997cc20-3311-4224-8a5b-230c01c643ba",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 0b2181c9b9c6129744d6fe0ada554875895745a5",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"state\": \"true\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/partner/state/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "partner",
+            "state",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Корректировка прайса магазина",
+      "id": "9fc481c3-34dd-48c7-8cf5-7ed7f77f67ed",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 0b2181c9b9c6129744d6fe0ada554875895745a5",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"url\": \"https://raw.githubusercontent.com/IvanovSemjon/Netology_final_project/refs/heads/main/Netology_final_project/reference/data/shop2.yaml\"}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/partner/update/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "partner",
+            "update",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение заказов магазина",
+      "id": "8500aff0-8bac-4273-a4d9-175d67e93303",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token 87090fb6ddd90fbca5eabef8c5cbc3bfd35df0b2",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/partner/orders/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "partner",
+            "orders",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Изменение статуса заказа",
+      "id": "95b64f37-3e0b-41a1-8687-cf074dacb870",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
