@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Изменение статуса заказа</title>
+</head>
+<body>
+    <h2>Статус заказа #{{ order.id }} изменен</h2>
+    
+    <p>Здравствуйте, {{ user.first_name }}!</p>
+    
+    <p>Статус вашего заказа изменился.</p>
+    
+    <h3>Информация о заказе:</h3>
+    <ul>
+        <li>Номер заказа: #{{ order.id }}</li>
+        <li>Дата: {{ order.dt|date:"d.m.Y H:i" }}</li>
+        <li>Новый статус: <strong>{{ order.get_state_display }}</strong></li>
+    </ul>
+    
+    {% if order.state == 'delivered' %}
+        <p>Поздравляем! Ваш заказ доставлен. Спасибо за покупку!</p>
+    {% elif order.state == 'sent' %}
+        <p>Ваш заказ отправлен и скоро будет доставлен.</p>
+    {% elif order.state == 'canceled' %}
+        <p>К сожалению, ваш заказ был отменен. Если у вас есть вопросы, свяжитесь с нами.</p>
+    {% endif %}
+    
+    <p>С уважением,<br>Команда магазина</p>
+</body>
+</html>

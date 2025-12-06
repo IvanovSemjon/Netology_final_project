@@ -1,0 +1,10 @@
+{
+    "python.defaultInterpreter": "..\\..\\venv\\Scripts\\python.exe",
+    "python.pythonPath": "..\\..\\venv\\Scripts\\python.exe",
+    "pylint.args": [
+        "--load-plugins=pylint_django",
+        "--django-settings-module=netology_pd_diplom.settings"
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
