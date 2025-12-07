@@ -1,6 +1,0 @@
-services:
-  include: "override by -f parameter"
-
-# Usage:
-# docker compose -f compose/docker-compose.dev.yml up
-# docker compose -f compose/docker-compose.prod.yml up
