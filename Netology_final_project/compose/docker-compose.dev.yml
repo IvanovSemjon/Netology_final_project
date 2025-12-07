@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: Netology_final_project/docker/dev.Dockerfile
+    env_file:
+      - ../Netology_final_project/env/.env.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../Netology_final_project/reference/netology_pd_diplom:/app
+    depends_on:
+      - redis
+
+  celery:
+    build:
+      context: ..
+      dockerfile: Netology_final_project/docker/dev.Dockerfile
+    env_file:
+      - ../Netology_final_project/env/.env.dev
+    command: ["/celery_entrypoint.sh"]
+    depends_on:
+      - redis
+      - web
+
+  celery_beat:
+    build:
+      context: ..
+      dockerfile: Netology_final_project/docker/dev.Dockerfile
+    env_file:
+      - ../Netology_final_project/env/.env.dev
+    command: ["celery", "-A", "backend.tasks.celery_app", "beat", "--loglevel=INFO"]
+    depends_on:
+      - redis
+      - web
+
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
