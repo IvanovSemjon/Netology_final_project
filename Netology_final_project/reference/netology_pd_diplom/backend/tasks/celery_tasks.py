@@ -1,130 +1,95 @@
-"""
-Celery задачи для асинхронного выполнения
-"""
+""" Celery задачи для асинхронного выполнения """
 import yaml
-from yaml import Loader as YamlLoader
-from requests import get
+from backend.models import (Category, Order, Parameter, Product, ProductInfo,
+                            ProductParameter, Shop)
+from backend.services.emails import send_order_status_email
 from celery import shared_task
 from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
+from requests import get
+from yaml import Loader as YamlLoader
 
-from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={"max_retries": 3, "countdown": 10},
+)
+def send_email(self, subject, message, from_email, recipient_list):
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=message,
+        from_email=from_email,
+        to=recipient_list,
+    )
+    msg.send()
 
 
-@shared_task
-def send_email(subject, message, from_email, recipient_list):
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={"max_retries": 3, "countdown": 10},
+)
+def send_order_status_email_task(self, order_id: int) -> None:
     """
-    Асинхронная отправка email
-    
-    Args:
-        subject: Тема письма
-        message: Текст письма
-        from_email: Email отправителя
-        recipient_list: Список получателей
+    Отправка email при изменении статуса заказа.
     """
-    try:
-        msg = EmailMultiAlternatives(
-            subject=subject,
-            body=message,
-            from_email=from_email,
-            to=recipient_list
+    order = Order.objects.get(id=order_id)
+    send_order_status_email(order)
+
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={"max_retries": 3, "countdown": 30},
+)
+def do_import(self, url: str) -> None:
+    """
+    Асинхронный импорт товаров из YAML-файла.
+    """
+    response = get(url, timeout=30)
+    response.raise_for_status()
+
+    data = yaml.load(response.content, Loader=YamlLoader)
+
+    shop, _ = Shop.objects.get_or_create(
+        name=data["shop"],
+        defaults={"is_accepting_orders": True},
+    )
+
+    # Категории
+    for category_data in data["categories"]:
+        category, _ = Category.objects.get_or_create(
+            id=category_data["id"],
+            defaults={"name": category_data["name"]},
         )
-        msg.send()
-        return f"Email отправлен успешно: {recipient_list}"
-        
-    except Exception as e:
-        return f"Ошибка отправки email: {str(e)}"
+        category.shops.add(shop)
 
+    # Очистка старых товаров
+    ProductInfo.objects.filter(shop=shop).delete()
 
-@shared_task
-def do_import(url):
-    """
-    Асинхронный импорт товаров из YAML файла
-    
-    Args:
-        url: URL для загрузки данных
-        
-    Returns:
-        dict: Результат импорта
-    """
-    try:
-        # Загружаем данные
-        response = get(url, timeout=30)
-        response.raise_for_status()
-        
-        data = yaml.load(response.content, Loader=YamlLoader)
-        
-        # Создаем или получаем магазин
-        shop, created = Shop.objects.get_or_create(
-            name=data['shop'],
-            defaults={'is_accepting_orders': True}
+    # Товары
+    for item in data["goods"]:
+        product, _ = Product.objects.get_or_create(
+            name=item["name"],
+            defaults={"category_id": item["category"]},
         )
-        
-        # Обрабатываем категории
-        categories_created = 0
-        for category_data in data['categories']:
-            category, created = Category.objects.get_or_create(
-                id=category_data['id'],
-                defaults={'name': category_data['name']}
+
+        product_info = ProductInfo.objects.create(
+            product=product,
+            shop=shop,
+            external_id=item["id"],
+            model=item["model"],
+            price=item["price"],
+            price_rrc=item["price_rrc"],
+            quantity=item["quantity"],
+        )
+
+        for param_name, param_value in item["parameters"].items():
+            parameter, _ = Parameter.objects.get_or_create(name=param_name)
+
+            ProductParameter.objects.create(
+                product_info=product_info,
+                parameter=parameter,
+                value=str(param_value),
             )
-            category.shops.add(shop)
-            if created:
-                categories_created += 1
-        
-        # Удаляем старые товары этого магазина
-        old_products_count = ProductInfo.objects.filter(shop=shop).count()
-        ProductInfo.objects.filter(shop=shop).delete()
-        
-        # Обрабатываем товары
-        products_created = 0
-        parameters_created = 0
-        
-        for item in data['goods']:
-            # Создаем или получаем продукт
-            product, created = Product.objects.get_or_create(
-                name=item['name'],
-                defaults={'category_id': item['category']}
-            )
-            
-            # Создаем информацию о продукте
-            product_info = ProductInfo.objects.create(
-                product=product,
-                shop=shop,
-                external_id=item['id'],
-                model=item['model'],
-                price=item['price'],
-                price_rrc=item['price_rrc'],
-                quantity=item['quantity']
-            )
-            products_created += 1
-            
-            # Обрабатываем параметры
-            for param_name, param_value in item['parameters'].items():
-                parameter, created = Parameter.objects.get_or_create(
-                    name=param_name
-                )
-                
-                ProductParameter.objects.create(
-                    product_info=product_info,
-                    parameter=parameter,
-                    value=str(param_value)
-                )
-                parameters_created += 1
-        
-        result = {
-            'status': 'success',
-            'shop': shop.name,
-            'categories_created': categories_created,
-            'old_products_deleted': old_products_count,
-            'products_created': products_created,
-            'parameters_created': parameters_created,
-            'message': f'Импорт завершен успешно для магазина {shop.name}'
-        }
-        
-        return result
-        
-    except Exception as e:
-        return {
-            'status': 'error',
-            'message': f'Ошибка импорта: {str(e)}'
-        }
