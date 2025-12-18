@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 
 from backend.models import User, ConfirmEmailToken
 from backend.api.serializers.user import UserSerializer
-from backend.services.emails import send_confirmation_email
 
 
 class RegisterAccount(APIView):
