@@ -5,8 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from backend.models import User, ConfirmEmailToken
+from backend.models.users import User
+from backend.models import ConfirmEmailToken
 from backend.api.serializers.user import UserSerializer
+from backend.tasks.celery_tasks import send_confirmation_email_task
 
 
 class RegisterAccount(APIView):

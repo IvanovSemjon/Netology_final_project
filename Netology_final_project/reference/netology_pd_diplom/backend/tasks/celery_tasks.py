@@ -1,12 +1,16 @@
 """ Celery задачи для асинхронного выполнения """
-import yaml
-from backend.models import (Category, Order, Parameter, Product, ProductInfo,
-                            ProductParameter, Shop)
-from backend.services.emails import send_order_status_email
 from celery import shared_task
 from django.core.mail import EmailMultiAlternatives
 from requests import get
+import yaml
 from yaml import Loader as YamlLoader
+
+
+from backend.models.catalog import Category, Product, ProductInfo, ProductParameter
+from backend.models.orders import Order
+from backend.models.parameters import Parameter
+from backend.models.shops import Shop
+from backend.services.emails import send_order_status_email
 
 
 @shared_task(
