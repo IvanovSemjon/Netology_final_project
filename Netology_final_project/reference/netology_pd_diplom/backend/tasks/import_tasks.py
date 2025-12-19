@@ -1,5 +1,4 @@
 """Фоновые задачи"""
-# pylint: disable=no-member
 from celery import shared_task
 
 from backend.models.tasks import ImportTask  # pylint: disable=import-error
@@ -9,9 +8,6 @@ from backend.services.import_export import ImportExportService  # pylint: disabl
 def handle_import(self, task_id: int):  # pylint: disable=unused-argument
     """
     Обрабатывает задачу импорта данных в фоновом режиме.
-    
-    Args:
-        task_id: ID задачи импорта для обработки
     """
     task = ImportTask.objects.get(pk=task_id)
     try:

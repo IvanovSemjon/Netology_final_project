@@ -146,7 +146,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"first_name\": \"Тест_4\",\r\n    \"last_name\": \"Кузнецов\",\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Рога и копыта\",\r\n    \"position\": \"Тестировщик\"\r\n}",
+          "raw": "{\r\n    \"first_name\": \"Тест_5\",\r\n    \"last_name\": \"Самсонов\",\r\n    \"email\": \"samsonov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Рога и копыта\",\r\n    \"position\": \"Тестировщик\"\r\n}",
           "options": {
             "raw": {
               "language": "json"

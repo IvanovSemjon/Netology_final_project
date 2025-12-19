@@ -25,6 +25,7 @@
           ]
         },
         "method": "GET",
+        "header": [],
         "url": {
           "raw": "http://127.0.0.1:8000/api/v1/partner/state/",
           "protocol": "http",
@@ -43,7 +44,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Изменение статуса магазина",
@@ -65,6 +67,7 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"state\": \"true\"}",
@@ -92,7 +95,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Корректировка прайса магазина",
@@ -114,9 +118,10 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\"url\": \"https://raw.githubusercontent.com/IvanovSemjon/Netology_final_project/refs/heads/main/Netology_final_project/reference/data/shop2.yaml\"}\r\n",
+          "raw": "{\"url\": \"https://raw.githubusercontent.com/IvanovSemjon/Netology_final_project/refs/heads/main/Netology_final_project/reference/data/shop1.yaml\"}\r\n",
           "options": {
             "raw": {
               "language": "json"
@@ -141,7 +146,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Получение заказов магазина",
@@ -163,6 +169,7 @@
           ]
         },
         "method": "GET",
+        "header": [],
         "url": {
           "raw": "http://127.0.0.1:8000/api/v1/partner/orders/",
           "protocol": "http",
@@ -181,7 +188,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Изменение статуса заказа",
@@ -192,7 +200,7 @@
           "apikey": [
             {
               "key": "value",
-              "value": "Token 0b2181c9b9c6129744d6fe0ada554875895745a5",
+              "value": "Token 87090fb6ddd90fbca5eabef8c5cbc3bfd35df0b2",
               "type": "string"
             },
             {
@@ -203,9 +211,10 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"order_id\": \"6\",\r\n  \"status\": \"confirmed\"\r\n}",
+          "raw": "{\r\n  \"order_id\": \"6\",\r\n  \"status\": \"sent\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -231,7 +240,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     }
   ]
 }

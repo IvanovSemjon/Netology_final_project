@@ -13,3 +13,25 @@ services:
     volumes:
       - ./reference/netology_pd_diplom:/app
     command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: netology_redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: netology_celery
+    command: celery -A netology_pd_diplom_project worker -l info
+    env_file:
+      - .env
+    volumes:
+      - ./reference/netology_pd_diplom:/app
+    depends_on:
+      - web
+      - redis

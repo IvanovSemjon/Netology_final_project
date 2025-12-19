@@ -113,25 +113,34 @@ class BasketView(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
     def put(self, request, *args, **kwargs):
-        """
-        Обновить товары в корзине
-        """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
-        items_string = request.data.get('items')
-        if items_string:
-            try:
-                items_dict = load_json(items_string)
-            except ValueError:
-                return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'})
-            else:
-                basket, _ = Order.objects.get_or_create(user_id=request.user.id, state='basket')
-                objects_updated = 0
-                for order_item in items_dict:
-                    if type(order_item['id']) == int and type(order_item['quantity']) == int:
-                        objects_updated += OrderItem.objects.filter(order_id=basket.id, id=order_item['id']).update(
-                            quantity=order_item['quantity'])
+        items = request.data.get('items')
 
-                return JsonResponse({'Status': True, 'Обновлено объектов': objects_updated})
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+        if not isinstance(items, list):
+            return JsonResponse({'Status': False, 'Errors': 'items должен быть массивом'}, status=400)
+
+        basket, _ = Order.objects.get_or_create(
+            user_id=request.user.id,
+            state='basket'
+        )
+
+        objects_updated = 0
+
+        for item in items:
+            item_id = item.get('id')
+            quantity = item.get('quantity')
+
+            if not isinstance(item_id, int) or not isinstance(quantity, int):
+                continue
+
+            objects_updated += OrderItem.objects.filter(
+                order=basket,
+                id=item_id
+            ).update(quantity=quantity)
+
+        return JsonResponse({
+            'Status': True,
+            'Обновлено объектов': objects_updated
+        })
