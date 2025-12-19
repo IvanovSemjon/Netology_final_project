@@ -5,49 +5,38 @@ from requests import get
 import yaml
 from yaml import Loader as YamlLoader
 
-
+from backend.models import ConfirmEmailToken
 from backend.models.catalog import Category, Product, ProductInfo
 from backend.models.parameters import Parameter, ProductParameter
 from backend.models.orders import Order
 from backend.models.shops import Shop
-from backend.services.emails import send_order_status_email
-from backend.services.emails import send_confirmation_email
 from backend.models.users import User
+from backend.services.emails import send_order_status_email
 
 
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_kwargs={"max_retries": 3, "countdown": 10},
-)
-def send_email(self, subject, message, from_email, recipient_list):
-    msg = EmailMultiAlternatives(
-        subject=subject,
-        body=message,
-        from_email=from_email,
-        to=recipient_list,
-    )
-    msg.send()
-
-
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_kwargs={"max_retries": 3, "countdown": 10},
-)
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={"max_retries": 3, "countdown": 10})
 def send_confirmation_email_task(self, user_id: int) -> None:
     """
     Асинхронная отправка email подтверждения регистрации
     """
     user = User.objects.get(id=user_id)
-    send_confirmation_email(user)
+
+    # Создание токена для подтверждения email
+    token, _ = ConfirmEmailToken.objects.get_or_create(user=user)
+
+    subject = "Подтверждение регистрации"
+    message = (
+        f"Здравствуйте, {user.first_name}!\n\n"
+        f"Для подтверждения регистрации используйте токен:\n{token.key}\n\nСпасибо!"
+    )
+    recipient_list = [user.email]
+    from_email = "noreply@example.com"
+
+    msg = EmailMultiAlternatives(subject=subject, body=message, from_email=from_email, to=recipient_list)
+    msg.send()
 
 
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_kwargs={"max_retries": 3, "countdown": 10},
-)
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={"max_retries": 3, "countdown": 10})
 def send_order_status_email_task(self, order_id: int) -> None:
     """
     Отправка email при изменении статуса заказа.
@@ -56,12 +45,7 @@ def send_order_status_email_task(self, order_id: int) -> None:
     send_order_status_email(order)
 
 
-
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_kwargs={"max_retries": 3, "countdown": 30},
-)
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={"max_retries": 3, "countdown": 30})
 def do_import(self, url: str) -> None:
     """
     Асинхронный импорт товаров из YAML-файла.
@@ -106,9 +90,24 @@ def do_import(self, url: str) -> None:
 
         for param_name, param_value in item["parameters"].items():
             parameter, _ = Parameter.objects.get_or_create(name=param_name)
-
             ProductParameter.objects.create(
                 product_info=product_info,
                 parameter=parameter,
                 value=str(param_value),
             )
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={"max_retries": 3, "countdown": 10},
+)
+def send_generic_email_task(self, subject, message, from_email, recipient_list):
+    from django.core.mail import EmailMultiAlternatives
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=message,
+        from_email=from_email,
+        to=recipient_list,
+    )
+    msg.send()

@@ -16,7 +16,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"semjonurievichivanov@gmail.com\",\r\n    \"token\": \"23784ea4-d2f2-4fc5-bb4b-f393e0008263\"\r\n}",
+          "raw": "{\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"token\": \"4594d981-c6f3-4b20-b257-e1383a91d618\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -49,11 +49,26 @@
       "name": "Вход в систему",
       "id": "dc3676da-df37-4bb7-a0a6-7abfcdad89c5",
       "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "c133921c349ff66375878efe6e1ffc07094bcb6f",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"mvideo@yandex.ru\",\r\n    \"password\": \"Sambo2023!\"\r\n}",
+          "raw": "{\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"password\": \"Semen2024!\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -90,7 +105,7 @@
           "apikey": [
             {
               "key": "value",
-              "value": "Token f439c3ddb2a8032488892c05ef05942d6e0e9643",
+              "value": "Token 96126fcbafd961a6964e22112a2e752ed437f729",
               "type": "string"
             },
             {
@@ -131,7 +146,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"first_name\": \"Тест_3\",\r\n    \"last_name\": \"Сидоров\",\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Рога и копыта\",\r\n    \"position\": \"Тестировщик\"\r\n}",
+          "raw": "{\r\n    \"first_name\": \"Тест_4\",\r\n    \"last_name\": \"Кузнецов\",\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Рога и копыта\",\r\n    \"position\": \"Тестировщик\"\r\n}",
           "options": {
             "raw": {
               "language": "json"

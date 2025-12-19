@@ -14,7 +14,7 @@
           "apikey": [
             {
               "key": "value",
-              "value": "Token 408f1e1a40581f9c565a24ea01b7c97ef823776b",
+              "value": "Token 96126fcbafd961a6964e22112a2e752ed437f729",
               "type": "string"
             },
             {
@@ -25,6 +25,7 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\r\n    \"items\": \"[{\\\"product_info\\\":62, \\\"quantity\\\": 1}, {\\\"product_info\\\": 63, \\\"quantity\\\": 1}]\"\r\n}\r\n",
@@ -51,7 +52,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Просмотр корзины",
@@ -65,7 +67,7 @@
           "apikey": [
             {
               "key": "value",
-              "value": "Token 408f1e1a40581f9c565a24ea01b7c97ef823776b",
+              "value": "Token 96126fcbafd961a6964e22112a2e752ed437f729",
               "type": "string"
             },
             {
@@ -76,6 +78,7 @@
           ]
         },
         "method": "GET",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "",
@@ -102,7 +105,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Редактирование количества товаров корзины",
@@ -124,6 +128,7 @@
           ]
         },
         "method": "PUT",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"items\": \"[{\\\"id\\\": 1, \\\"quantity\\\": 1}, {\\\"id\\\": 2, \\\"quantity\\\": 1}, {\\\"id\\\": 3, \\\"quantity\\\": 1}]\"}",
@@ -150,7 +155,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Удаление товаров из корзины",
@@ -172,6 +178,7 @@
           ]
         },
         "method": "DELETE",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"items\": \"28\"}",
@@ -198,7 +205,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Создание контактов для доставки",
@@ -220,6 +228,7 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"city\": \"Домодедово\", \"street\": \"Мезенцева\", \"house\": \"2\", \"apartment\": \"3\", \"phone\": \"+79001234567\"}",
@@ -247,7 +256,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Просмотр контактов для доставки",
@@ -269,6 +279,7 @@
           ]
         },
         "method": "GET",
+        "header": [],
         "url": {
           "raw": "http://127.0.0.1:8000/api/v1/user/contact/",
           "protocol": "http",
@@ -287,7 +298,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Подтверхжение заказа",
@@ -309,6 +321,7 @@
           ]
         },
         "method": "POST",
+        "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\"id\": \"6\", \"contact\": \"4\"}",
@@ -335,7 +348,8 @@
             ""
           ]
         }
-      }
+      },
+      "response": []
     }
   ]
 }

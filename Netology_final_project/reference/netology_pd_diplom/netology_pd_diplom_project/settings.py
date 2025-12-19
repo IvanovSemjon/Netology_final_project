@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     
 
     'rest_framework',
+    'rest_framework.authtoken',
     'backend.apps.BackendConfig',
 ]
 
@@ -73,3 +74,12 @@ CELERYD_POOL_RESTARTS = True
 
 if sys.platform == "win32":
     CELERYD_POOL = "solo"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
+    ),
+}

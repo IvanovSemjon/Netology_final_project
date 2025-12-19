@@ -5,12 +5,14 @@ from rest_framework.views import APIView
 
 from backend.models import Contact
 from backend.api.serializers import ContactSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class ContactView(APIView):
     """
-    A class for managing contact information.
+    Управление контактами
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """
@@ -25,7 +27,7 @@ class ContactView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Create a new contact for the authenticated user.
+        Добавить новый контакт
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -51,7 +53,7 @@ class ContactView(APIView):
 
     def delete(self, request, *args, **kwargs):
         """
-        Delete the contact of the authenticated user.
+       Удалить контакт
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -73,7 +75,7 @@ class ContactView(APIView):
 
     def put(self, request, *args, **kwargs):
         """
-        Update the contact information of the authenticated user.
+        Скорректировать контакт
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)

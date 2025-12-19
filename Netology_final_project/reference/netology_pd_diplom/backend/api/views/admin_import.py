@@ -2,6 +2,7 @@
 View для запуска Celery-задачи do_import из админки
 """
 from django.contrib.admin.views.decorators import staff_member_required
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt

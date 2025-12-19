@@ -12,13 +12,14 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order
 from backend.api.serializers import ShopSerializer, OrderSerializer
 from backend.api.serializers.partners import PartnerUpdateSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from backend.utils import strtobool
 from backend.constants import ERROR_MESSAGES
 
 
 class PartnerUpdate(APIView):
     """
-    A class for updating partner information.
+    Обновление информации о партнерах
     """
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     serializer_class = PartnerUpdateSerializer
@@ -28,7 +29,7 @@ class PartnerUpdate(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Update the partner price list information.
+        Обновление прайса.
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -129,12 +130,13 @@ class PartnerUpdate(APIView):
 
 class PartnerState(APIView):
     """
-    A class for managing partner state.
+    Управление состоянием партнера.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """
-        Retrieve the state of the partner.
+        Получить информацию о состоянии партнера.
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -152,7 +154,7 @@ class PartnerState(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Update the state of a partner.
+        Обновить информацию о состоянии партнера
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -175,6 +177,7 @@ class PartnerOrders(APIView):
     """
     Класс для получения заказов поставщиками
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """

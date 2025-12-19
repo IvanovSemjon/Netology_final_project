@@ -6,12 +6,14 @@ from rest_framework.views import APIView
 
 from backend.models import Category, Shop, ProductInfo
 from backend.api.serializers import CategorySerializer, ShopSerializer, ProductInfoSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class CategoryView(ListAPIView):
     """
     Класс для просмотра категорий
     """
+    permission_classes = [AllowAny]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -20,18 +22,20 @@ class ShopView(ListAPIView):
     """
     Класс для просмотра списка магазинов
     """
+    permission_classes = [AllowAny]
     queryset = Shop.objects.filter(is_accepting_orders=True)
     serializer_class = ShopSerializer
 
 
 class ProductInfoView(APIView):
     """
-    A class for searching products.
+    Поиск продуктов
     """
+    permission_classes = [AllowAny]
 
     def get(self, request: Request, *args, **kwargs):
         """
-        Retrieve the product information based on the specified filters.
+        Получить информацию о товаре по фильтрам
         """
         query = Q(shop__is_accepting_orders=True)
         shop_id = request.query_params.get('shop_id')

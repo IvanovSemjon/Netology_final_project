@@ -8,16 +8,18 @@ from backend.models import Order
 from backend.api.serializers import OrderSerializer
 from backend.signals import new_order
 from backend.services.emails import send_order_confirmation_email
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class OrderView(APIView):
     """
     Класс для получения и размещения заказов пользователями
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """
-        Retrieve the details of user orders.
+        Получить информацию о заказах
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -33,7 +35,7 @@ class OrderView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Put an order and send a notification.
+        Оформить заказ и отправить уведомление
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)

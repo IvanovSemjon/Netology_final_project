@@ -7,16 +7,18 @@ from ujson import loads as load_json
 
 from backend.models import Order, OrderItem
 from backend.api.serializers import OrderItemSerializer, OrderSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class BasketView(APIView):
     """
-    A class for managing the user's shopping basket.
+    Управление корзиной покупок пользователя
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """
-        Retrieve the items in the user's basket.
+        Получить список товаров в корзине
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -32,7 +34,7 @@ class BasketView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Add items to the user's basket.
+        Добавить товары в корзину
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -89,7 +91,7 @@ class BasketView(APIView):
 
     def delete(self, request, *args, **kwargs):
         """
-        Remove items from the user's basket.
+        Удалить товары из корзины
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
@@ -112,7 +114,7 @@ class BasketView(APIView):
 
     def put(self, request, *args, **kwargs):
         """
-        Update the items in the user's basket.
+        Обновить товары в корзине
         """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
