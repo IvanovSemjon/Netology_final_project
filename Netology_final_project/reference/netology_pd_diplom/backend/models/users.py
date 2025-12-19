@@ -86,6 +86,7 @@ class User(AbstractUser):
             models.Index(fields=["is_active"])
             ]
 
+
     def __str__(self) -> str:
         """Строковое представление модели User"""
         return f"{self.first_name or ''} {self.last_name or ''}".strip() or self.email

@@ -6,11 +6,13 @@ import yaml
 from yaml import Loader as YamlLoader
 
 
-from backend.models.catalog import Category, Product, ProductInfo, ProductParameter
+from backend.models.catalog import Category, Product, ProductInfo
+from backend.models.parameters import Parameter, ProductParameter
 from backend.models.orders import Order
-from backend.models.parameters import Parameter
 from backend.models.shops import Shop
 from backend.services.emails import send_order_status_email
+from backend.services.emails import send_confirmation_email
+from backend.models.users import User
 
 
 @shared_task(
@@ -26,6 +28,19 @@ def send_email(self, subject, message, from_email, recipient_list):
         to=recipient_list,
     )
     msg.send()
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={"max_retries": 3, "countdown": 10},
+)
+def send_confirmation_email_task(self, user_id: int) -> None:
+    """
+    Асинхронная отправка email подтверждения регистрации
+    """
+    user = User.objects.get(id=user_id)
+    send_confirmation_email(user)
 
 
 @shared_task(

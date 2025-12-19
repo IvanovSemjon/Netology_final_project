@@ -17,9 +17,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_rest_passwordreset',
+    
 
     'rest_framework',
-    'backend',
+    'backend.apps.BackendConfig',
 ]
 
 AUTH_USER_MODEL = 'backend.User'
