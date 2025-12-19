@@ -1,0 +1,163 @@
+{
+  "info": {
+    "_postman_id": "45cadf5e-bfff-45d4-86da-fcfba8535b46",
+    "name": "Регистрация и аутентификация для пользователя Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Подтверждение email",
+      "id": "b218d72a-de4b-4e97-a841-559252f221f2",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"semjonurievichivanov@gmail.com\",\r\n    \"token\": \"23784ea4-d2f2-4fc5-bb4b-f393e0008263\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/register/confirm/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "register",
+            "confirm",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Вход в систему",
+      "id": "dc3676da-df37-4bb7-a0a6-7abfcdad89c5",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"mvideo@yandex.ru\",\r\n    \"password\": \"Sambo2023!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/login/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "login",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Показать детали пользователя",
+      "id": "57fc0a3d-3656-4e9f-9477-76c6de70e365",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "Token f439c3ddb2a8032488892c05ef05942d6e0e9643",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/details/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "details",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создание нового пользователя",
+      "id": "b7a7e6f8-149a-43b9-9b46-667feff42931",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"first_name\": \"Тест_3\",\r\n    \"last_name\": \"Сидоров\",\r\n    \"email\": \"kuznetsov@gmail.com\",\r\n    \"password\": \"Semen2024!\",\r\n    \"company\": \"ООО Рога и копыта\",\r\n    \"position\": \"Тестировщик\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/user/register/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "user",
+            "register",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

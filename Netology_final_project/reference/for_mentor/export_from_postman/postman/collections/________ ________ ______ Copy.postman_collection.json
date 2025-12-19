@@ -1,0 +1,116 @@
+{
+  "info": {
+    "_postman_id": "39a9e6bb-2177-46a3-bd14-d6306c5a900f",
+    "name": "Проверка каталога товров Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Корневой эндпоинт API",
+      "id": "9c380b14-b9a5-4816-9607-db83ecbe7db6",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Получить список категорий",
+      "id": "1dd537e9-8d96-40d3-816e-b66e0ff56cd2",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/categories/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "categories",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Получить список всех магазинов",
+      "id": "0080e1ec-b5ce-4851-8156-26db3c234873",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/shops/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "shops",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Получить список всех товров",
+      "id": "06ef7ba4-db84-4424-b35c-dc0cba7bf6c2",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/v1/products/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "products",
+            ""
+          ]
+        }
+      }
+    }
+  ]
+}
