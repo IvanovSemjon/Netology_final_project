@@ -1,4 +1,6 @@
-"""Модели относящиеся к пользователям"""
+"""
+Модели относящиеся к пользователям.
+"""
 from typing import Any, Optional
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
@@ -8,7 +10,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
-    """Управление пользователями"""
+    """
+    Управление пользователями.
+    """
 
     use_in_migrations = True
 
@@ -25,13 +29,17 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email: str, password: Optional[str] = None, **extra_fields: Any):
-        """Создать обычного пользователя"""
+        """
+        Создать обычного пользователя.
+        """
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email: str, password: str, **extra_fields: Any):
-        """Создать супер-пользователя"""
+        """
+        Создать супер-пользователя.
+        """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -77,7 +85,9 @@ class User(AbstractUser):
     password_reset_expires = models.DateTimeField(_("expires at"), null=True, blank=True)
 
     class Meta:
-        """Метаданные модели User"""
+        """
+        Метаданные модели User.
+        """
         verbose_name = _("Пользователь")
         verbose_name_plural = _("Пользователи")
         ordering = ("email",)
@@ -88,7 +98,9 @@ class User(AbstractUser):
 
 
     def __str__(self) -> str:
-        """Строковое представление модели User"""
+        """
+        Строковое представление модели User.
+        """
         return f"{self.first_name or ''} {self.last_name or ''}".strip() or self.email
 
 class Contact(models.Model):
@@ -119,11 +131,16 @@ class Contact(models.Model):
     phone = models.CharField(_("phone"), max_length=20)
 
     class Meta:
+        """
+        Метаданные моедли Contact.
+        """
         verbose_name = _("Контакт")
         verbose_name_plural = _("Контакты")
 
     def clean(self):
-        """Валидация количества контактов"""
+        """
+        Валидация количества контактов.
+        """
         from django.core.exceptions import ValidationError
         if self.type == 'phone':
             # Максимум 1 телефон

@@ -1,4 +1,6 @@
-"""Модели относящиеся к категориям"""
+"""
+Модели относящиеся к категориям.
+"""
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -40,14 +42,18 @@ class Product(models.Model):
         )
 
     class Meta:
-        """Метаданные модели Product"""
+        """
+        Метаданные модели Product.
+        """
         verbose_name = _("Товар")
         verbose_name_plural = _("Товары")
         ordering = ("name",)
         indexes = [models.Index(fields=["category"])]
 
     def __str__(self) -> str:
-        """Строковое представление модели Product"""
+        """
+        Строковое представление модели Product.
+        """
         return str(self.name)
 
 
@@ -67,7 +73,9 @@ class ProductInfo(models.Model):
     price_rrc = models.DecimalField(_("price rrc"), max_digits=10, decimal_places=2)
 
     class Meta:
-        """Метаданнные модели ProductInfo"""
+        """
+        Метаданнные модели ProductInfo.
+        """
         verbose_name = _("Информация о товаре")
         verbose_name_plural = _("Информация о товарах")
         constraints = [models.UniqueConstraint(fields=["product",
@@ -83,22 +91,30 @@ class ProductInfo(models.Model):
         ]
 
     def __str__(self) -> str:
-        """Строковое представление модели ProductInfo"""
+        """
+        Строковое представление модели ProductInfo.
+        """
         return f"{self.product.name} — {self.shop.name}"
 
     @property
     def available(self) -> bool:
-        """Доступно ли для заказа"""
+        """
+        Доступно ли для заказа.
+        """
         return self.quantity > 0
 
     def check_availability(self, quantity: int) -> bool:
-        """Проверить доступность указанного количества"""
+        """
+        Проверить доступность указанного количества.
+        """
         if not isinstance(quantity, int) or quantity < 0:
             return False
         return self.quantity >= quantity
 
     def clean(self) -> None:
-        """Валидация модели"""
+        """
+        Валидация модели.
+        """
         if self.price <= 0:
             raise ValidationError(_("Price must be > 0"))
         if self.price_rrc <= 0:

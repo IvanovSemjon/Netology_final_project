@@ -1,4 +1,6 @@
-"""Модели связанные с логами"""
+"""
+Модели связанные с логами.
+"""
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -31,7 +33,9 @@ class EmailLog(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        """Метаданные модели EmailLog"""
+        """
+        Метаданные модели EmailLog.
+        """
         verbose_name = _("email log")
         verbose_name_plural = _("email logs")
         ordering = ("-sent_at",)
@@ -42,5 +46,7 @@ class EmailLog(models.Model):
             ]
 
     def __str__(self) -> str:
-        """Строковое представление модели EmailLog"""
+        """
+        Строковое представление модели EmailLog.
+        """
         return f"{self.email} — {self.subject}"

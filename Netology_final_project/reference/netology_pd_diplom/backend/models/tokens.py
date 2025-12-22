@@ -1,4 +1,6 @@
-"""Модели для токенов подтверждения"""
+"""
+Модели для токенов подтверждения.
+"""
 import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -6,7 +8,9 @@ from .users import User
 
 
 class ConfirmEmailToken(models.Model):
-    """Токен для подтверждения email при регистрации"""
+    """
+    Токен для подтверждения email при регистрации.
+    """
     
     user = models.ForeignKey(
         User,

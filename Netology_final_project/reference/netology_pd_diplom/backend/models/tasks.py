@@ -1,4 +1,6 @@
-"""Модели связанные с импортом и экспортом данных"""
+"""
+Модели связанные с импортом и экспортом данных.
+"""
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -35,13 +37,17 @@ class ImportTask(models.Model):
     imported_items = models.PositiveIntegerField(default=0)
 
     class Meta:
-        """Метаданные модели ImportTask"""
+        """
+        Метаданные модели ImportTask.
+        """
         verbose_name = _("Задача импорта")
         verbose_name_plural = _("Список задач импорта")
         ordering = ("created_at",)
 
     def __str__(self) -> str:
-        """Строковое представление модели ImportTask"""
+        """
+        Строковое представление модели ImportTask.
+        """
         try:
             date_str = (
                 self.created_at.strftime("%d.%m.%Y %H:%M")
@@ -89,7 +95,9 @@ class ExportTask(models.Model):
     export_params = models.JSONField(default=dict, blank=True)
 
     class Meta:
-        """Метаданные модели ExportTask"""
+        """
+        Метаданные модели ExportTask.
+        """
         verbose_name = _("Задача экспорта")
         verbose_name_plural = _("Список задач экспорта")
         ordering = ("created_at",)
@@ -100,7 +108,9 @@ class ExportTask(models.Model):
         ]
 
     def __str__(self) -> str:
-        """Строковое представление модели ExportTask"""
+        """
+        Строковое представление модели ExportTask.
+        """
         try:
             date_str = (
                 self.created_at.strftime("%d.%m.%Y %H:%M")

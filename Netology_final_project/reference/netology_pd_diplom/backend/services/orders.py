@@ -1,37 +1,39 @@
-"""Сервисы связанные с заказами"""
+"""
+Сервисы связанные с заказами.
+"""
+
 # pylint: disable=no-member
 from typing import Optional
-from django.db import transaction
 
 from backend.models.orders import Order, OrderState, OrderStatusHistory
 from backend.services.inventory import InventoryService
 from backend.signals import order_status_changed
+from django.db import transaction
 
 
 class OrderServiceError(Exception):
     """
     Исключение для ошибок сервиса управления заказами.
-    
-    """    
+    """
+
     pass
 
 
 class OrderService:
     """
     Сервис для управления заказами и их статусами.
-    
     """
+
     @staticmethod
     @transaction.atomic
     def change_status(
         order: Order,
         new_status: str,
         changed_by: Optional[int] = None,
-        comment: str = ""
+        comment: str = "",
     ) -> None:
         """
         Изменяет статус заказа с автоматическим управлением складскими запасами.
-
         """
         old_status = order.state
 

@@ -1,4 +1,6 @@
-"""Модели относящиеся к магазинам"""
+"""
+Модели относящиеся к магазинам.
+"""
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from .users import User
@@ -18,12 +20,16 @@ class Shop(models.Model):
     is_accepting_orders = models.BooleanField(_("accepting orders"), default=True)
 
     class Meta:
-        """Метаданные модели Shop"""
+        """
+        Метаданные модели Shop.
+        """
         verbose_name = _("Магазин")
         verbose_name_plural = _("Магазины")
         ordering = ("name",)
         indexes = [models.Index(fields=["is_accepting_orders"])]
 
     def __str__(self) -> str:
-        """Строковое представление модели Shop"""
+        """
+        Строковое представление модели Shop.
+        """
         return str(self.name)

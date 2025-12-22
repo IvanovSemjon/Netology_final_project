@@ -1,4 +1,6 @@
-"""Модели относящиеся к заказам"""
+"""
+Модели относящиеся к заказам.
+"""
 from django.db import models
 from django.db.models import F, Sum
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +10,9 @@ from .users import User
 
 
 class OrderState(models.TextChoices):
-    """Модель статуса заказа"""
+    """
+    Модель статуса заказа.
+    """
     BASKET = "basket", _("Корзина")
     NEW = "new", _("Новый")
     CONFIRMED = "confirmed", _("Подтвержден")
@@ -44,7 +48,9 @@ class Order(models.Model):
     client_email_sent = models.BooleanField(default=False)
 
     class Meta:
-        """Метаданные модели Order"""
+        """
+        Метаданные модели Order.
+        """
         verbose_name = _("Заказ")
         verbose_name_plural = _("Заказы")
         ordering = ("-dt",)
@@ -56,11 +62,15 @@ class Order(models.Model):
         ]
 
     def __str__(self) -> str:
-        """Строковое представление модели Order"""
+        """
+        Строковое представление модели Order.
+        """
         return f"Заказ #{self.pk} создан {self.dt}"
 
     def get_total_sum(self):
-        """Получить общую сумму заказа"""
+        """
+        Получить общую сумму заказа.
+        """
         try:
             return (
                 self.ordered_items.aggregate(
@@ -72,7 +82,9 @@ class Order(models.Model):
             return 0
 
     def get_items_count(self):
-        """Получить общее количество товаров в заказе"""
+        """
+        Получить общее количество товаров в заказе.
+        """
         try:
             return self.ordered_items.aggregate(total=Sum("quantity"))["total"] or 0
         except AttributeError:
@@ -95,7 +107,9 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(verbose_name="Количество")
 
     class Meta:
-        """Метаданные модели OrderItem"""
+        """
+        Метаданные модели OrderItem.
+        """
         verbose_name = _("Заказ")
         verbose_name_plural = _("Список заказов")
         constraints = [
@@ -107,7 +121,9 @@ class OrderItem(models.Model):
         ]
 
     def __str__(self) -> str:
-        """Строковое представление модели OrderItem"""
+        """
+        Строковое представление модели OrderItem.
+        """
         try:
             product_name = self.product_info.product.name
         except (AttributeError, TypeError):
@@ -115,7 +131,9 @@ class OrderItem(models.Model):
         return f"{product_name} - {self.quantity} шт."
 
     def get_total_price(self):
-        """Получить общую стоимость позиции"""
+        """
+        Получить общую стоимость позиции.
+        """
         try:
             return self.quantity * self.product_info.price
         except (AttributeError, TypeError):
@@ -146,7 +164,9 @@ class OrderStatusHistory(models.Model):
     comment = models.TextField(blank=True, verbose_name=_("comment"))
 
     class Meta:
-        """Метаданные модели Contact"""
+        """
+        Метаданные модели Contact.
+        """
         verbose_name = _("order status history")
         verbose_name_plural = _("order status histories")
         ordering = ("-changed_at",)
