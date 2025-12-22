@@ -1,42 +1,6 @@
 """
 Views по партнерам.
 """
-from rest_framework import serializers
-from drf_spectacular.utils import extend_schema
-
-class PartnerUpdateRequestSerializer(serializers.Serializer):
-    file = serializers.FileField(required=False)
-    url = serializers.URLField(required=False)
-
-class PartnerUpdateResponseSerializer(serializers.Serializer):
-    status = serializers.BooleanField()
-    message = serializers.CharField()
-    errors = serializers.ListField(child=serializers.CharField(), required=False)
-
-@extend_schema(
-    summary="Обновление прайса партнёра",
-    description="Позволяет загружать файл или указать URL с прайс-листом для магазина",
-    request=PartnerUpdateRequestSerializer,
-    responses={200: PartnerUpdateResponseSerializer, 400: PartnerUpdateResponseSerializer},
-    tags=["Партнёры"]
-)
-def post(self, request, *args, **kwargs):
-    ...
-
-
-
-
-
-
-Вы сказали:
-сделай итоговый файл
-
-
-ChatGPT сказал:
-Вот полностью оформленный вариант views.py для партнёров с DRF-Spectacular, включая сериализаторы запросов/ответов и extend_schema для каждого метода. Логика работы методов сохранена без изменений — добавление схем не влияет на выполнение:
-
-python
-Копировать код
 import yaml
 from backend.api.serializers import OrderSerializer, ShopSerializer
 from backend.api.serializers.partners import PartnerUpdateSerializer
