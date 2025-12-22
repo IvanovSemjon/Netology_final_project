@@ -1,16 +1,17 @@
 """Сервисы связанные с заказами"""
 # pylint: disable=no-member
 from typing import Optional
-
 from django.db import transaction
 
 from backend.models.orders import Order, OrderState, OrderStatusHistory
-from backend.services.inventory import InventoryService, InventoryError
+from backend.services.inventory import InventoryService
 from backend.signals import order_status_changed
 
 
 class OrderServiceError(Exception):
-    """Исключение для ошибок сервиса управления заказами."""
+    """Исключение для ошибок сервиса управления заказами."""    
+    pass
+
 
 class OrderService:
     """Сервис для управления заказами и их статусами."""
@@ -21,7 +22,7 @@ class OrderService:
         new_status: str,
         changed_by: Optional[int] = None,
         comment: str = ""
-        ) -> None:
+    ) -> None:
         """
         Изменяет статус заказа с автоматическим управлением складскими запасами.
 
@@ -32,10 +33,7 @@ class OrderService:
             return
 
         if old_status == OrderState.BASKET and new_status == OrderState.NEW:
-            try:
-                InventoryService.reserve_for_order(order)
-            except InventoryError as exc:
-                raise OrderServiceError(str(exc)) from exc
+            InventoryService.reserve_for_order(order)
 
         if old_status != OrderState.CANCELED and new_status == OrderState.CANCELED:
             InventoryService.release_for_order(order)
@@ -50,14 +48,12 @@ class OrderService:
             changed_by_id=changed_by,
             comment=comment,
         )
-        
-        # Отправляем сигнал об изменении статуса
+
         order_status_changed.send(
-            sender=self.__class__,
-            user_id=order.user_id,
+            sender=OrderService,
             order_id=order.id,
             old_status=old_status,
-            new_status=new_status
+            new_status=new_status,
         )
 
 class OrderView(APIView):
