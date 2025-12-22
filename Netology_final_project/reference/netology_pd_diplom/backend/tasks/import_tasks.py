@@ -8,6 +8,7 @@ from backend.services.import_export import ImportExportService  # pylint: disabl
 def handle_import(self, task_id: int):  # pylint: disable=unused-argument
     """
     Обрабатывает задачу импорта данных в фоновом режиме.
+    
     """
     task = ImportTask.objects.get(pk=task_id)
     try:

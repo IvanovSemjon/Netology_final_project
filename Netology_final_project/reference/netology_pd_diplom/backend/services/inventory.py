@@ -8,21 +8,22 @@ from backend.models.orders import Order
 
 
 class InventoryError(Exception):
-    """Исключение для ошибок управления складскими запасами."""
+    """
+    Исключение для ошибок управления складскими запасами.
+    
+    """
 
 
 class InventoryService:
-    """Сервис для управления складскими запасами и резервированием товаров."""
+    """
+    Сервис для управления складскими запасами и резервированием товаров.
+    
+    """
     @staticmethod
     def reserve_for_order(order: Order) -> None:
         """
         Резервирует товары для заказа атомарно.
-        
-        Args:
-            order: Заказ, для которого нужно зарезервировать товары
-            
-        Raises:
-            InventoryError: При нехватке товара на складе
+
         """
         with transaction.atomic():
             # получаем список товаров в наличии
@@ -49,8 +50,6 @@ class InventoryService:
         """
         Возвращает резерв назад на склад.
         
-        Args:
-            order: Заказ, для которого нужно освободить резерв товаров
         """
         with transaction.atomic():
             required = {}

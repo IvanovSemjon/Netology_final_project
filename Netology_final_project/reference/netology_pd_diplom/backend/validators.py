@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 def validate_phone_number(value):
-    """Валидация номера телефона"""
+    """
+    Валидация номера телефона
+    
+    """
     # Убираем все нецифровые символы кроме +
     cleaned_value = re.sub(r'[^+\d]', '', value)
     
@@ -26,7 +29,10 @@ def validate_phone_number(value):
 
 
 def validate_password_strength(password):
-    """Валидация силы пароля"""
+    """
+    Валидация силы пароля.
+    
+    """
     if len(password) < 8:
         raise ValidationError(
             _('Пароль должен содержать минимум 8 символов'),
@@ -53,7 +59,10 @@ def validate_password_strength(password):
 
 
 def validate_positive_quantity(value):
-    """Валидация положительного количества"""
+    """
+    Валидация положительного количества.
+    
+    """
     if value <= 0:
         raise ValidationError(
             _('Количество должно быть больше нуля'),
@@ -62,7 +71,10 @@ def validate_positive_quantity(value):
 
 
 def validate_positive_price(value):
-    """Валидация положительной цены"""
+    """
+    Валидация положительной цены.
+    
+    """
     if value <= 0:
         raise ValidationError(
             _('Цена должна быть больше нуля'),
@@ -71,7 +83,10 @@ def validate_positive_price(value):
 
 
 def validate_email_domain(value):
-    """Валидация домена email"""
+    """
+    Валидация домена email.
+    
+    """
     allowed_domains = ['gmail.com', 'yandex.ru', 'mail.ru', 'outlook.com']
     domain = value.split('@')[-1].lower()
     

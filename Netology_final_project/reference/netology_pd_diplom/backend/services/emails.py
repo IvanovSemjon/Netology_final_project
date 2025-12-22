@@ -2,12 +2,14 @@
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from django.urls import reverse
 from backend.models import ConfirmEmailToken
 
 
 def send_confirmation_email(user):
-    """Отправка email для подтверждения регистрации"""
+    """
+    Отправка email для подтверждения регистрации.
+    
+    """
     try:
         token, created = ConfirmEmailToken.objects.get_or_create(user=user)
         
@@ -34,7 +36,10 @@ def send_confirmation_email(user):
 
 
 def send_order_confirmation_email(order):
-    """Отправка email о подтверждении заказа"""
+    """
+    Отправка email о подтверждении заказа.
+
+    """
     subject = f'Заказ #{order.id} подтвержден'
     
     message = render_to_string('emails/order_confirmation.html', {
@@ -53,7 +58,10 @@ def send_order_confirmation_email(order):
 
 
 def send_order_status_email(order):
-    """Отправка email об изменении статуса заказа"""
+    """
+    Отправка email об изменении статуса заказа.
+    
+    """
     subject = f'Статус заказа #{order.id} изменен'
     
     message = render_to_string('emails/order_status.html', {

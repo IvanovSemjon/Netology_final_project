@@ -17,7 +17,8 @@ from backend.services.emails import send_order_status_email
 @shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={"max_retries": 3, "countdown": 10})
 def send_confirmation_email_task(self, user_id: int) -> None:
     """
-    Асинхронная отправка email подтверждения регистрации
+    Асинхронная отправка email подтверждения регистрации.
+
     """
     user = User.objects.get(id=user_id)
 
@@ -40,6 +41,7 @@ def send_confirmation_email_task(self, user_id: int) -> None:
 def send_order_status_email_task(self, order_id: int) -> None:
     """
     Отправка email при изменении статуса заказа.
+
     """
     order = Order.objects.get(id=order_id)
     send_order_status_email(order)
@@ -49,6 +51,7 @@ def send_order_status_email_task(self, order_id: int) -> None:
 def do_import(self, url: str) -> None:
     """
     Асинхронный импорт товаров из YAML-файла.
+    
     """
     response = get(url, timeout=30)
     response.raise_for_status()

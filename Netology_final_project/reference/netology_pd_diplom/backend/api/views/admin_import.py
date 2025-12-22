@@ -17,12 +17,14 @@ from backend.tasks.celery_tasks import do_import
 @method_decorator(staff_member_required, name='dispatch')
 class AdminImportView(APIView):
     """
-    View для запуска импорта товаров из админки
+    View для запуска импорта товаров из админки.
+
     """
     
     def post(self, request):
         """
-        Запуск асинхронного импорта товаров
+        Запуск асинхронного импорта товаров.
+        
         """
         url = request.data.get('url')
         

@@ -9,12 +9,18 @@ from backend.signals import order_status_changed
 
 
 class OrderServiceError(Exception):
-    """Исключение для ошибок сервиса управления заказами."""    
+    """
+    Исключение для ошибок сервиса управления заказами.
+    
+    """    
     pass
 
 
 class OrderService:
-    """Сервис для управления заказами и их статусами."""
+    """
+    Сервис для управления заказами и их статусами.
+    
+    """
     @staticmethod
     @transaction.atomic
     def change_status(
@@ -55,13 +61,3 @@ class OrderService:
             old_status=old_status,
             new_status=new_status,
         )
-
-class OrderView(APIView):
-
-    def get(self, request):
-        orders = OrderService.list_user_orders(request.user)
-        return Response(OrderSerializer(orders, many=True).data)
-
-    def post(self, request):
-        order = OrderService.create_order(request.user, request.data)
-        return Response(OrderSerializer(order).data)

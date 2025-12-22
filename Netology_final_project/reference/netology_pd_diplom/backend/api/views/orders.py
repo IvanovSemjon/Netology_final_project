@@ -13,11 +13,17 @@ from backend.services.emails import send_order_confirmation_email
 
 class OrderView(APIView):
     """
-    Получение и оформление заказов пользователем
+    Получение и оформление заказов пользователем.
+
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Получение списка заказов пользователя.
+
+        """
+        new_order.send(sender=self.__class__, user_id=request.user.id)
         orders = (
             Order.objects
             .filter(user_id=request.user.id)
@@ -39,6 +45,10 @@ class OrderView(APIView):
         return Response(OrderSerializer(orders, many=True).data)
 
     def post(self, request):
+        """
+        Оформление заказа пользователем.
+        
+        """
         if {'id', 'contact'}.issubset(request.data):
             order_id = request.data['id']
 
