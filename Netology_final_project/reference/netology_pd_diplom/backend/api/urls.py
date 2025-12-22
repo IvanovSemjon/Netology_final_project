@@ -9,7 +9,7 @@ from .views.basket import BasketView
 from .views.contacts import ContactView
 from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
-from .views.admin_import import AdminImportView, start_import
+from backend.api.views.admin_import import AdminImportView
 
 @api_view(['GET'])
 def api_root(request):
@@ -56,5 +56,5 @@ urlpatterns = [
     
     # Admin endpoints
     path('admin/import/', AdminImportView.as_view(), name='admin-import'),
-    path('admin/start-import/', start_import, name='admin-start-import'),
+    # path('admin/start-import/', start_import, name='admin-start-import'),
 ]

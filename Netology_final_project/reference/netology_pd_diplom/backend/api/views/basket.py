@@ -3,15 +3,65 @@ Views для корзины заказов.
 """
 
 from collections import defaultdict
+from django.db import IntegrityError
 
 from backend.api.serializers import OrderItemSerializer, OrderSerializer
 from backend.models import Order, OrderItem, ProductInfo
-from django.db import IntegrityError
-from django.db.models import F, Q, Sum
-from rest_framework import status
+from drf_spectacular.utils import extend_schema
+from django.db.models import F, Sum, Q
+from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+# ----------------------
+# Сериализаторы для документации
+# ----------------------
+
+
+class BasketItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    product_info = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+
+
+class BasketAddRequestSerializer(serializers.Serializer):
+    items = BasketItemSerializer(many=True)
+
+
+class BasketAddResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    created_objects = serializers.IntegerField()
+    message = serializers.CharField()
+
+
+class BasketUpdateRequestSerializer(serializers.Serializer):
+    items = BasketItemSerializer(many=True)
+
+
+class BasketUpdateResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    updated_objects = serializers.IntegerField()
+
+
+class BasketDeleteRequestSerializer(serializers.Serializer):
+    items = serializers.ListField(child=serializers.IntegerField())
+
+
+class BasketDeleteResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    deleted_objects = serializers.IntegerField()
+
+
+class ErrorResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    errors = serializers.CharField()
+
+
+# ----------------------
+# View
+# ----------------------
 
 
 class BasketView(APIView):
@@ -21,11 +71,13 @@ class BasketView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="Просмотр корзины",
+        description="Получение всех товаров текущей корзины пользователя",
+        responses=OrderSerializer(many=True),
+        tags=["Корзина"],
+    )
     def get(self, request, *args, **kwargs):
-        """
-        Получить список товаров в корзине.
-        """
-
         basket = (
             Order.objects.filter(user_id=request.user.id, state="basket")
             .prefetch_related(
@@ -40,19 +92,22 @@ class BasketView(APIView):
             )
             .distinct()
         )
-
         serializer = OrderSerializer(basket, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
+    @extend_schema(
+        summary="Добавление товаров в корзину",
+        description="Добавляет товары в корзину пользователя",
+        request=BasketAddRequestSerializer,
+        responses={201: BasketAddResponseSerializer, 400: ErrorResponseSerializer},
+        tags=["Корзина"],
+    )
     def post(self, request, *args, **kwargs):
-        """
-        Добавить товары в корзину.
-        """
         items = request.data.get("items")
         if not isinstance(items, list) or not items:
             return Response(
                 {"status": False, "errors": "items должен быть непустым массивом"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=400,
             )
 
         basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
@@ -66,17 +121,12 @@ class BasketView(APIView):
                     serializer.save()
                     objects_created += 1
                 except IntegrityError as error:
-                    return Response(
-                        {"status": False, "errors": str(error)},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                    return Response({"status": False, "errors": str(error)}, status=400)
             else:
                 return Response(
-                    {"status": False, "errors": serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"status": False, "errors": serializer.errors}, status=400
                 )
 
-        # Подсчёт товаров по магазинам (без N+1)
         product_ids = [item["product_info"] for item in items]
         products = ProductInfo.objects.select_related("shop").filter(id__in=product_ids)
         products_map = {p.id: p for p in products}
@@ -94,23 +144,23 @@ class BasketView(APIView):
         summary = "В заказ добавлено: " + ", ".join(message_parts)
 
         return Response(
-            {
-                "status": True,
-                "created_objects": objects_created,
-                "message": summary,
-            },
-            status=status.HTTP_201_CREATED,
+            {"status": True, "created_objects": objects_created, "message": summary},
+            status=201,
         )
 
+    @extend_schema(
+        summary="Удаление товаров из корзины",
+        description="Удаляет указанные товары из корзины",
+        request=BasketDeleteRequestSerializer,
+        responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
+        tags=["Корзина"],
+    )
     def delete(self, request, *args, **kwargs):
-        """
-        Удалить товары из корзины.
-        """
         items = request.data.get("items")
         if not items:
             return Response(
                 {"status": False, "errors": "Не указаны объекты для удаления"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=400,
             )
 
         if isinstance(items, str):
@@ -131,18 +181,22 @@ class BasketView(APIView):
 
         return Response(
             {"status": False, "errors": "Нет корректных объектов для удаления"},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=400,
         )
 
+    @extend_schema(
+        summary="Обновление количества товаров в корзине",
+        description="Обновляет количество товаров в корзине",
+        request=BasketUpdateRequestSerializer,
+        responses={200: BasketUpdateResponseSerializer, 400: ErrorResponseSerializer},
+        tags=["Корзина"],
+    )
     def put(self, request, *args, **kwargs):
-        """
-        Корректировка количества товаров в корзине.
-        """
         items = request.data.get("items")
         if not isinstance(items, list) or not items:
             return Response(
                 {"status": False, "errors": "items должен быть непустым массивом"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=400,
             )
 
         basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
@@ -151,7 +205,6 @@ class BasketView(APIView):
         for item in items:
             item_id = item.get("id")
             quantity = item.get("quantity")
-
             if isinstance(item_id, int) and isinstance(quantity, int):
                 objects_updated += OrderItem.objects.filter(
                     order=basket, id=item_id

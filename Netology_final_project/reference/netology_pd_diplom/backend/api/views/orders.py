@@ -8,11 +8,43 @@ from backend.services.emails import send_order_confirmation_email
 from backend.signals import new_order
 from django.db import IntegrityError
 from django.db.models import F, Sum
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
+
+# ----------------------
+# Сериализаторы для документации
+# ----------------------
+
+class OrderListResponseSerializer(serializers.ModelSerializer):
+    total_sum = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        model = Order
+        fields = "__all__"
+
+
+class OrderCreateRequestSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    contact = serializers.IntegerField()
+
+
+class OrderCreateResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    message = serializers.CharField()
+
+
+class ErrorResponseSerializer(serializers.Serializer):
+    status = serializers.BooleanField()
+    errors = serializers.CharField()
+
+
+# ----------------------
+# View
+# ----------------------
 
 class OrderView(APIView):
     """
@@ -21,10 +53,13 @@ class OrderView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="Получение заказов пользователя",
+        description="Возвращает список всех заказов пользователя, кроме корзины",
+        responses=OrderListResponseSerializer(many=True),
+        tags=["Заказы"]
+    )
     def get(self, request):
-        """
-        Получение списка заказов пользователя.
-        """
         new_order.send(sender=self.__class__, user_id=request.user.id)
         orders = (
             Order.objects.filter(user_id=request.user.id)
@@ -43,14 +78,17 @@ class OrderView(APIView):
             .distinct()
         )
 
-        return Response(
-            OrderSerializer(orders, many=True).data, status=status.HTTP_200_OK
-        )
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        summary="Оформление заказа",
+        description="Позволяет оформить заказ из корзины, указывая контакт",
+        request=OrderCreateRequestSerializer,
+        responses={200: OrderCreateResponseSerializer, 400: ErrorResponseSerializer},
+        tags=["Заказы"]
+    )
     def post(self, request):
-        """
-        Оформление заказа пользователем.
-        """
         if {"id", "contact"}.issubset(request.data):
             order_id = request.data["id"]
 

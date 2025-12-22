@@ -1,10 +1,10 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import Token
 from django.utils.html import format_html
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+
 
 from backend.models import (
     User, Shop, Category, Product, ProductInfo, Parameter, 

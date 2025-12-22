@@ -111,13 +111,15 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     'SECURITY': [{'BearerAuth': []}],
     'SECURITY_SCHEMES': {
-        'BearerAuth': {
-            'type': 'http',
-            'scheme': 'bearer',
-            'bearerFormat': 'JWT',
-        }
-    },
+    'TokenAuth': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization'
+    }
+},
 }
+
+
 
 # =======================
 # Celery
