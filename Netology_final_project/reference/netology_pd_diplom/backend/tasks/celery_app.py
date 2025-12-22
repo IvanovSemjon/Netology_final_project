@@ -1,4 +1,6 @@
-"""Фоновые задачи Celery"""
+"""
+Фоновые задачи Celery.
+"""
 from celery import Celery
 
 celery_app = Celery("app")
