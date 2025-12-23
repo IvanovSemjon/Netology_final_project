@@ -20,10 +20,6 @@ from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 
 
-# ----------------------
-# Сериализаторы для документации
-# ----------------------
-
 class PartnerUpdateRequestSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
     url = serializers.URLField(required=False)
@@ -46,7 +42,6 @@ class PartnerStateUpdateRequestSerializer(serializers.Serializer):
 
 
 class PartnerOrdersResponseSerializer(serializers.Serializer):
-    # Используем OrderSerializer для списка заказов
     orders = OrderSerializer(many=True)
 
 
@@ -60,10 +55,6 @@ class PartnerOrderStatusUpdateResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
     errors = serializers.CharField(required=False)
 
-
-# ----------------------
-# Views
-# ----------------------
 
 class PartnerUpdate(APIView):
     """

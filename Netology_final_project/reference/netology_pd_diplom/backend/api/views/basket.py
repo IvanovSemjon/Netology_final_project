@@ -7,18 +7,13 @@ from django.db import IntegrityError
 
 from backend.api.serializers import OrderItemSerializer, OrderSerializer
 from backend.models import Order, OrderItem, ProductInfo
-from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import extend_schema
 from django.db.models import F, Sum, Q
 from rest_framework import serializers
+from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-
-# ----------------------
-# Сериализаторы для документации
-# ----------------------
 
 
 class BasketItemSerializer(serializers.Serializer):
@@ -60,17 +55,14 @@ class ErrorResponseSerializer(serializers.Serializer):
     errors = serializers.CharField()
 
 
-# ----------------------
-# View
-# ----------------------
-
-
 class BasketView(APIView):
     """
     Управление корзиной покупок пользователя.
     """
 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = 'basket'
 
     @extend_schema(
         summary="Просмотр корзины",

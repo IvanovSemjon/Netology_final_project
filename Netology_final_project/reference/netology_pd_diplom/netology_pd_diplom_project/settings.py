@@ -10,9 +10,6 @@ DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ['*']
 
-# =======================
-# Приложения
-# =======================
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -35,14 +32,8 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# =======================
-# Пользовательская модель
-# =======================
 AUTH_USER_MODEL = 'backend.User'
 
-# =======================
-# Middleware
-# =======================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -73,9 +64,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'netology_pd_diplom_project.wsgi.application'
 
-# =======================
-# База данных
-# =======================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -83,14 +71,8 @@ DATABASES = {
     }
 }
 
-# =======================
-# Статика
-# =======================
 STATIC_URL = '/static/'
 
-# =======================
-# DRF и DRF-Spectacular
-# =======================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -100,6 +82,17 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "backend.api.exceptions.custom_exception_handler",
+    "DEFAULT_THROTTLE_CLASSES": [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "111/day",
+        "anon": "17/day",
+        "basket": "5/min",
+        "account": "6/min",
+    }
 }
 
 SPECTACULAR_SETTINGS = {
@@ -119,11 +112,6 @@ SPECTACULAR_SETTINGS = {
 },
 }
 
-
-
-# =======================
-# Celery
-# =======================
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
 CELERY_ACCEPT_CONTENT = ['json']
@@ -134,8 +122,5 @@ CELERYD_POOL_RESTARTS = True
 if sys.platform == "win32":
     CELERYD_POOL = "solo"
 
-# =======================
-# Email
-# =======================
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = "webmaster@localhost"

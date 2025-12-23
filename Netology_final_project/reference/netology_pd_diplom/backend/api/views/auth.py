@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -57,6 +58,9 @@ class RegisterAccount(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle, ScopedRateThrottle]
+    throttle_scope = 'account'
+
 
     @extend_schema(
         summary="Регистрация пользователя",
@@ -121,6 +125,8 @@ class ConfirmAccount(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_scope = 'account'
 
     @extend_schema(
         summary="Подтверждение email",
@@ -166,6 +172,8 @@ class LoginAccount(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_scope = 'account'
 
     @extend_schema(
         summary="Авторизация пользователя",
@@ -207,6 +215,8 @@ class AccountDetails(APIView):
     """
 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
+    throttle_scope = 'account'
 
     @extend_schema(
         summary="Просмотр данных пользователя",

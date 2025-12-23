@@ -1,3 +1,6 @@
+"""
+Views для контактов.
+"""
 from backend.api.serializers import ContactSerializer
 from backend.models import Contact
 from django.db.models import Q

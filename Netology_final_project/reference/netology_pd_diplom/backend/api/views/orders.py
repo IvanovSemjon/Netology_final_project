@@ -15,10 +15,6 @@ from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 
 
-# ----------------------
-# Сериализаторы для документации
-# ----------------------
-
 class OrderListResponseSerializer(serializers.ModelSerializer):
     total_sum = serializers.DecimalField(max_digits=12, decimal_places=2)
 
@@ -41,10 +37,6 @@ class ErrorResponseSerializer(serializers.Serializer):
     status = serializers.BooleanField()
     errors = serializers.CharField()
 
-
-# ----------------------
-# View
-# ----------------------
 
 class OrderView(APIView):
     """
