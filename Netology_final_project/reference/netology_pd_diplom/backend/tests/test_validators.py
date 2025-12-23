@@ -11,23 +11,22 @@ from backend.validators import (
 
 class ValidatorsTestCase(TestCase):
     """Тесты кастомных валидаторов"""
-    
+
     def test_validate_phone_number_valid(self):
-        """Тест валидации корректных номеров телефонов"""
+        """Корректные номера телефонов"""
         valid_phones = [
             '+79001234567',
             '+12345678901',
             '89001234567'
         ]
-        
         for phone in valid_phones:
             try:
                 validate_phone_number(phone)
             except ValidationError:
-                self.fail(f'Валидный номер {phone} не прошел валидацию')
-    
+                self.fail(f"Валидный номер {phone} не прошел валидацию")
+
     def test_validate_phone_number_invalid(self):
-        """Тест валидации некорректных номеров телефонов"""
+        """Некорректные номера телефонов"""
         invalid_phones = [
             '123',
             'abc',
@@ -35,71 +34,60 @@ class ValidatorsTestCase(TestCase):
             '++79001234567',
             '8-900-123-45-67'
         ]
-        
         for phone in invalid_phones:
-            with self.assertRaises(ValidationError):
+            with self.assertRaises(ValidationError, msg=f"Номер {phone} должен быть некорректным"):
                 validate_phone_number(phone)
-    
+
     def test_validate_password_strength_valid(self):
-        """Тест валидации сильных паролей"""
+        """Сильные пароли"""
         valid_passwords = [
             'TestPass123',
             'MySecure1Pass',
             'Strong123Password'
         ]
-        
-        for password in valid_passwords:
+        for pwd in valid_passwords:
             try:
-                validate_password_strength(password)
+                validate_password_strength(pwd)
             except ValidationError:
-                self.fail(f'Валидный пароль {password} не прошел валидацию')
-    
+                self.fail(f"Валидный пароль {pwd} не прошел валидацию")
+
     def test_validate_password_strength_invalid(self):
-        """Тест валидации слабых паролей"""
+        """Слабые пароли"""
         invalid_passwords = [
-            '123',  # Слишком короткий
-            'password',  # Нет заглавных букв и цифр
-            'PASSWORD',  # Нет строчных букв и цифр
-            'Password',  # Нет цифр
-            'password123',  # Нет заглавных букв
+            '123',
+            'password',
+            'PASSWORD',
+            'Password',
+            'password123',
         ]
-        
-        for password in invalid_passwords:
-            with self.assertRaises(ValidationError):
-                validate_password_strength(password)
-    
+        for pwd in invalid_passwords:
+            with self.assertRaises(ValidationError, msg=f"Пароль {pwd} должен быть некорректным"):
+                validate_password_strength(pwd)
+
     def test_validate_positive_quantity_valid(self):
-        """Тест валидации положительного количества"""
-        valid_quantities = [1, 5, 100, 1000]
-        
-        for quantity in valid_quantities:
+        """Положительное количество"""
+        for qty in [1, 5, 100, 1000]:
             try:
-                validate_positive_quantity(quantity)
+                validate_positive_quantity(qty)
             except ValidationError:
-                self.fail(f'Валидное количество {quantity} не прошло валидацию')
-    
+                self.fail(f"Валидное количество {qty} не прошло валидацию")
+
     def test_validate_positive_quantity_invalid(self):
-        """Тест валидации неположительного количества"""
-        invalid_quantities = [0, -1, -100]
-        
-        for quantity in invalid_quantities:
-            with self.assertRaises(ValidationError):
-                validate_positive_quantity(quantity)
-    
+        """Неположительное количество"""
+        for qty in [0, -1, -100]:
+            with self.assertRaises(ValidationError, msg=f"Количество {qty} должно быть некорректным"):
+                validate_positive_quantity(qty)
+
     def test_validate_positive_price_valid(self):
-        """Тест валидации положительной цены"""
-        valid_prices = [1, 10.5, 100, 1000.99]
-        
-        for price in valid_prices:
+        """Положительная цена"""
+        for price in [1, 10.5, 100, 1000.99]:
             try:
                 validate_positive_price(price)
             except ValidationError:
-                self.fail(f'Валидная цена {price} не прошла валидацию')
-    
+                self.fail(f"Валидная цена {price} не прошла валидацию")
+
     def test_validate_positive_price_invalid(self):
-        """Тест валидации неположительной цены"""
-        invalid_prices = [0, -1, -100.5]
-        
-        for price in invalid_prices:
-            with self.assertRaises(ValidationError):
+        """Неположительная цена"""
+        for price in [0, -1, -100.5]:
+            with self.assertRaises(ValidationError, msg=f"Цена {price} должна быть некорректной"):
                 validate_positive_price(price)

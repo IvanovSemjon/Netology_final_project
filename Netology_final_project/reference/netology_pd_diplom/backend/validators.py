@@ -9,20 +9,16 @@ from django.utils.translation import gettext_lazy as _
 def validate_phone_number(value):
     """
     Валидация номера телефона.
+    Поддерживает:
+    - +7XXXXXXXXXX
+    - +XXXXXXXXXXX (любые международные номера)
+    - 8XXXXXXXXXX (российские номера)
     """
-    # Убираем все нецифровые символы кроме +
-    cleaned_value = re.sub(r'[^+\d]', '', value)
+    cleaned_value = value.replace(' ', '').replace('-', '')
+
+    pattern = r'^(?:\+7\d{10}|\+?\d{11,15}|8\d{10})$'
     
-    # Проверяем различные форматы
-    patterns = [
-        r'^\+7\d{10}$',  # +7XXXXXXXXXX (11 цифр)
-        r'^\+7\d{9}$',   # +7XXXXXXXXX (10 цифр)
-        r'^8\d{10}$',    # 8XXXXXXXXXX
-        r'^7\d{10}$',    # 7XXXXXXXXXX
-        r'^\+\d{10,15}$' # Международные номера
-    ]
-    
-    if not any(re.match(pattern, cleaned_value) for pattern in patterns):
+    if not re.match(pattern, cleaned_value):
         raise ValidationError(
             _('Введите корректный номер телефона (например: +79001234567)'),
             code='invalid_phone'

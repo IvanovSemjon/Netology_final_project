@@ -90,6 +90,7 @@ class User(AbstractUser):
         """
         verbose_name = _("Пользователь")
         verbose_name_plural = _("Пользователи")
+        app_label = 'backend'
         ordering = ("email",)
         indexes = [
             models.Index(fields=["type"]),

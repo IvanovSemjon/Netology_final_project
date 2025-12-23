@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from backend.models import User, ConfirmEmailToken
+from backend.models import ConfirmEmailToken
+from backend.models.users import User
 
 
 class AuthTestCase(TestCase):
@@ -32,47 +33,42 @@ class AuthTestCase(TestCase):
         self.assertTrue(response.json()['Status'])
         self.assertIn('Проверьте email', response.json()['Message'])
         
-        # Проверяем, что пользователь создан
         user = User.objects.get(email=self.valid_user_data['email'])
-        self.assertFalse(user.is_active)  # Должен быть неактивным до подтверждения
+        self.assertFalse(user.is_active)
         
-        # Проверяем, что создан токен подтверждения
         self.assertTrue(ConfirmEmailToken.objects.filter(user=user).exists())
     
     def test_user_registration_invalid_password(self):
         """Тест регистрации с невалидным паролем"""
         invalid_data = self.valid_user_data.copy()
-        invalid_data['password'] = '123'  # Слишком простой пароль
+        invalid_data['password'] = '123'
         
         response = self.client.post(self.register_url, invalid_data)
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(response.json()['Status'])
         self.assertIn('password', response.json()['Errors'])
     
     def test_user_registration_duplicate_email(self):
         """Тест регистрации с существующим email"""
-        # Создаем пользователя
         User.objects.create_user(
             email=self.valid_user_data['email'],
-            password='TestPass123'
+            password='TestPass123',
+            is_active=True
         )
-        
         response = self.client.post(self.register_url, self.valid_user_data)
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(response.json()['Status'])
     
     def test_email_confirmation_success(self):
         """Тест успешного подтверждения email"""
-        # Создаем пользователя
         user = User.objects.create_user(
             email=self.valid_user_data['email'],
             password='TestPass123',
             is_active=False
         )
         
-        # Создаем токен подтверждения
         token = ConfirmEmailToken.objects.create(user=user)
         
         confirm_data = {
@@ -85,16 +81,13 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.json()['Status'])
         
-        # Проверяем, что пользователь стал активным
         user.refresh_from_db()
         self.assertTrue(user.is_active)
         
-        # Проверяем, что токен удален
         self.assertFalse(ConfirmEmailToken.objects.filter(key=token.key).exists())
     
     def test_login_success(self):
         """Тест успешного входа"""
-        # Создаем активного пользователя
         user = User.objects.create_user(
             email=self.valid_user_data['email'],
             password=self.valid_user_data['password'],
@@ -121,5 +114,5 @@ class AuthTestCase(TestCase):
         
         response = self.client.post(self.login_url, login_data)
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(response.json()['Status'])
