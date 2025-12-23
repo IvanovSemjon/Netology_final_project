@@ -11,12 +11,11 @@ def validate_phone_number(value):
     Валидация номера телефона.
     Поддерживает:
     - +7XXXXXXXXXX
-    - +XXXXXXXXXXX (любые международные номера)
-    - 8XXXXXXXXXX (российские номера)
+    - +XXXXXXXXXXX (международные номера)
     """
-    cleaned_value = value.replace(' ', '').replace('-', '')
+    cleaned_value = value.replace(' ', '')  
 
-    pattern = r'^(?:\+7\d{10}|\+?\d{11,15}|8\d{10})$'
+    pattern = r'^(?:\+7\d{10}|\+\d{11,15})$'
     
     if not re.match(pattern, cleaned_value):
         raise ValidationError(
