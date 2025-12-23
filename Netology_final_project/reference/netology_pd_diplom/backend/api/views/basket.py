@@ -7,9 +7,10 @@ from django.db import IntegrityError
 
 from backend.api.serializers import OrderItemSerializer, OrderSerializer
 from backend.models import Order, OrderItem, ProductInfo
+from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import extend_schema
 from django.db.models import F, Sum, Q
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -155,10 +156,11 @@ class BasketView(APIView):
         )
 
 
+
     @extend_schema(
         summary="Удаление товаров из корзины",
         description="Удаляет указанные товары из корзины по product_info",
-        request=BasketDeleteRequestSerializer,  # Сериализатор запроса для отображения в Swagger/ReDoc
+        request=BasketDeleteRequestSerializer,
         responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
         tags=["Корзина"],
     )
