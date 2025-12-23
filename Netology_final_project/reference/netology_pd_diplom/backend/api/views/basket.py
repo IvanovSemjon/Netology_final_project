@@ -78,6 +78,9 @@ class BasketView(APIView):
         tags=["Корзина"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        Просмотр корзины.
+        """
         basket = (
             Order.objects.filter(user_id=request.user.id, state="basket")
             .prefetch_related(
@@ -103,6 +106,9 @@ class BasketView(APIView):
         tags=["Корзина"],
     )
     def post(self, request, *args, **kwargs):
+        """
+        Добавление товаров в корзину.
+        """
         items = request.data.get("items")
         if not isinstance(items, list) or not items:
             return Response(
@@ -149,13 +155,16 @@ class BasketView(APIView):
         )
 
     @extend_schema(
-        summary="Удаление товаров из корзины",
-        description="Удаляет указанные товары из корзины",
-        request=BasketDeleteRequestSerializer,
-        responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
-        tags=["Корзина"],
-    )
+    summary="Удаление товаров из корзины",
+    description="Удаляет указанные товары из корзины по product_info",
+    request=BasketDeleteRequestSerializer,
+    responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
+    tags=["Корзина"],
+)
     def delete(self, request, *args, **kwargs):
+        """
+        Удаление товаров из корзины.
+        """
         items = request.data.get("items")
         if not items:
             return Response(
@@ -167,22 +176,15 @@ class BasketView(APIView):
             items = items.split(",")
 
         basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
-        query = Q()
-        has_items = False
-
-        for order_item_id in items:
-            if str(order_item_id).isdigit():
-                query |= Q(order_id=basket.id, id=int(order_item_id))
-                has_items = True
-
-        if has_items:
-            deleted_count = OrderItem.objects.filter(query).delete()[0]
+        deleted_count = OrderItem.objects.filter(order=basket, product_info_id__in=items).delete()[0]
+        if deleted_count > 0:
             return Response({"status": True, "deleted_objects": deleted_count})
 
         return Response(
             {"status": False, "errors": "Нет корректных объектов для удаления"},
             status=400,
         )
+
 
     @extend_schema(
         summary="Обновление количества товаров в корзине",
@@ -192,6 +194,9 @@ class BasketView(APIView):
         tags=["Корзина"],
     )
     def put(self, request, *args, **kwargs):
+        """
+        Изменение количества товаров в корзине.
+        """
         items = request.data.get("items")
         if not isinstance(items, list) or not items:
             return Response(

@@ -44,7 +44,6 @@ class Command(BaseCommand):
                 )
                 return
 
-            # Создаем магазин
             shop, created = Shop.objects.get_or_create(
                 name=data.get("shop", f"Магазин без имени"),
                 defaults={"is_accepting_orders": True},
@@ -52,7 +51,7 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(f"Создан магазин: {shop.name}")
 
-            # Создаем категории
+
             for category_data in data.get("categories", []):
                 category, created = Category.objects.get_or_create(
                     id=category_data.get("id"),
