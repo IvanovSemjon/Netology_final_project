@@ -154,13 +154,14 @@ class BasketView(APIView):
             status=201,
         )
 
+
     @extend_schema(
-    summary="Удаление товаров из корзины",
-    description="Удаляет указанные товары из корзины по product_info",
-    request=BasketDeleteRequestSerializer,
-    responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
-    tags=["Корзина"],
-)
+        summary="Удаление товаров из корзины",
+        description="Удаляет указанные товары из корзины по product_info",
+        request=BasketDeleteRequestSerializer,  # Сериализатор запроса для отображения в Swagger/ReDoc
+        responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
+        tags=["Корзина"],
+    )
     def delete(self, request, *args, **kwargs):
         """
         Удаление товаров из корзины.
@@ -177,6 +178,7 @@ class BasketView(APIView):
 
         basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
         deleted_count = OrderItem.objects.filter(order=basket, product_info_id__in=items).delete()[0]
+
         if deleted_count > 0:
             return Response({"status": True, "deleted_objects": deleted_count})
 
