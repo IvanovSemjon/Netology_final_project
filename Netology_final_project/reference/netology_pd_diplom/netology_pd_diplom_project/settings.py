@@ -1,6 +1,10 @@
 import os
 import sys
 from pathlib import Path
+from django.conf import settings
+
+ACCOUNT_ADAPTER = 'backend.adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'backend.adapters.CustomSocialAccountAdapter'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,6 +21,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_rest_passwordreset',
 ]
 
@@ -32,6 +37,10 @@ THIRD_PARTY_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.yandex',
+    'allauth.socialaccount.providers.vk',
 ]
 
 LOCAL_APPS = [
@@ -49,10 +58,88 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-REST_USE_JWT = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_STORE_TOKENS = True
 
-JWT_AUTH_COOKIE = "access"
-JWT_AUTH_REFRESH_COOKIE = "refresh"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+REST_AUTH_REGISTER_SERIALIZER = "backend.api.serializers.user.CustomRegisterSerializer"
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'jwt-auth'
+JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-token'
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'vk': {
+        'APP': {
+            'client_id': os.getenv('SOCIAL_AUTH_VK_CLIENT_ID'),
+            'secret': os.getenv('SOCIAL_AUTH_VK_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {'v': '5.131'},
+    },
+    'yandex': {
+        'APP': {
+            'client_id': os.getenv('SOCIAL_AUTH_YANDEX_CLIENT_ID'),
+            'secret': os.getenv('SOCIAL_AUTH_YANDEX_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['login:email'],
+    },
+    'github': {
+        'APP': {
+            'client_id': os.getenv('SOCIAL_AUTH_GITHUB_CLIENT_ID'),
+            'secret': os.getenv('SOCIAL_AUTH_GITHUB_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['user:email'],
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': True,
+    },
+    'google': {
+        'APP': {
+            'client_id': os.getenv('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('SOCIAL_AUTH_GOOGLE_SECRET'),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'jwt-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'jwt-refresh-token',
+    'JWT_AUTH_HTTPONLY': False,
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
+    'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
+    'JWT_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
+    'JWT_SERIALIZER_WITH_EXPIRATION': 'dj_rest_auth.serializers.JWTSerializerWithExpiration',
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',
+    'USER_DETAILS_SERIALIZER': 'backend.api.serializers.user.UserDetailsSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'dj_rest_auth.serializers.PasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'dj_rest_auth.serializers.PasswordResetConfirmSerializer',
+    'PASSWORD_CHANGE_SERIALIZER': 'dj_rest_auth.serializers.PasswordChangeSerializer',
+    'REGISTER_SERIALIZER': 'backend.api.serializers.user.CustomRegisterSerializer',
+    'REGISTER_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'SESSION_LOGIN': False,
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -114,6 +201,7 @@ REST_FRAMEWORK = {
         "anon": "17/day",
         "basket": "5/min",
         "account": "6/min",
+        "dj_rest_auth": "10/min",
     }
 }
 
@@ -146,3 +234,42 @@ if sys.platform == "win32":
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
+
+
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:8000')
+
+SOCIAL_CALLBACK_URLS = {
+    'github': f'{BASE_URL}/accounts/github/login/callback/',
+    'google': f'{BASE_URL}/accounts/google/login/callback/',
+    'yandex': f'{BASE_URL}/accounts/yandex/login/callback/',
+    'vk': f'{BASE_URL}/accounts/vk/login/callback/',
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIMS': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+    'JTI_CLAIM': 'jti',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}

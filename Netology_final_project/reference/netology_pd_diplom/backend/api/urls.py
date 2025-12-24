@@ -10,7 +10,7 @@ from .views.contacts import ContactView
 from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
 from backend.api.views.admin_import import AdminImportView
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from backend.api.views.social import GitHubLogin, GoogleLogin, YandexLogin, VKLogin
 
 @api_view(['GET'])
 def api_root(request):
@@ -22,6 +22,7 @@ def api_root(request):
             'products': '/api/v1/products/',
             'user_register': '/api/v1/user/register/',
             'user_login': '/api/v1/user/login/',
+            'social_auth': '/api/v1/auth/social/',
             'basket': '/api/v1/basket/',
             'order': '/api/v1/order/',
         }
@@ -29,11 +30,8 @@ def api_root(request):
 
 app_name = 'api'
 urlpatterns = [
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    # =======  АПИ  =====================
     path('', api_root, name='api-root'),
+    
     # =======  Партнеры  ============
     path('partner/update/', PartnerUpdate.as_view(), name='partner-update'),
     path('partner/state/', PartnerState.as_view(), name='partner-state'),
@@ -59,5 +57,10 @@ urlpatterns = [
     
     # =======  Админка ==============
     path('admin/import/', AdminImportView.as_view(), name='admin-import'),
-    # path('admin/start-import/', start_import, name='admin-start-import'),
+    
+    # =======  Социальные сети ==============
+    path('auth/github/', GitHubLogin.as_view(), name='github_login'),
+    path('auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('auth/yandex/', YandexLogin.as_view(), name='yandex_login'),
+    path('auth/vk/', VKLogin.as_view(), name='vk_login'),
 ]

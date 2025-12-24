@@ -1,27 +1,29 @@
 from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-    SpectacularRedocView,
-)
+from django.views.generic import TemplateView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "api/v1/",
-        include(("backend.api.urls", "backend"), namespace="backend"),
-    ),
+    
+    # REST API authentication 
+    path('api/v1/auth/', include('dj_rest_auth.urls')),
+    path('api/v1/auth/registration/', include('dj_rest_auth.registration.urls')),
+    
+    # Social authentication
+    path('api/v1/auth/social/', include('backend.api.urls_social')),
+    
+    # allauth -  веб-интерфейс
+    path('accounts/', include('allauth.urls')),
+    
+    # Основное API 
+    path('api/v1/', include(('backend.api.urls', 'backend'), namespace='backend')),
+    
+    # OpenAPI documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path(
-        'api/docs/swagger/',
-        SpectacularSwaggerView.as_view(url_name='schema'),
-        name='swagger-ui',
-    ),
-    path(
-        'api/docs/redoc/',
-        SpectacularRedocView.as_view(url_name='schema'),
-        name='redoc',
-    ),
-    path("api/auth/", include("dj_rest_auth.urls")),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
+    # Главная страница
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
