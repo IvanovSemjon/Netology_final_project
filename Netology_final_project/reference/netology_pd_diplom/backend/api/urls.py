@@ -10,7 +10,7 @@ from .views.contacts import ContactView
 from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
 from backend.api.views.admin_import import AdminImportView
-from backend.api.views.social import GitHubLogin, GoogleLogin, YandexLogin, VKLogin
+from backend.api.views.social import GitHubLogin, GoogleLogin, VKLogin
 
 @api_view(['GET'])
 def api_root(request):
@@ -61,6 +61,5 @@ urlpatterns = [
     # =======  Социальные сети ==============
     path('auth/github/', GitHubLogin.as_view(), name='github_login'),
     path('auth/google/', GoogleLogin.as_view(), name='google_login'),
-    path('auth/yandex/', YandexLogin.as_view(), name='yandex_login'),
     path('auth/vk/', VKLogin.as_view(), name='vk_login'),
 ]

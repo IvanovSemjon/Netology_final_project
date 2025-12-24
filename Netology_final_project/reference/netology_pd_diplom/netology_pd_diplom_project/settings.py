@@ -121,6 +121,36 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_SIGNUP_FIELDS = {
+    'email': {
+        'required': True,
+        'placeholder': 'Электронная почта',
+    },
+    'username': {
+        'required': False,
+        'placeholder': 'Имя пользователя (опционально)',
+    },
+    'first_name': {
+        'required': True,
+        'placeholder': 'Имя',
+    },
+    'last_name': {
+        'required': True,
+        'placeholder': 'Фамилия',
+    },
+}
+
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
 REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_COOKIE': 'jwt-auth',
@@ -180,6 +210,8 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

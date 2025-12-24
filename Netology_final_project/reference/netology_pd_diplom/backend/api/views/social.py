@@ -1,7 +1,6 @@
 import os
 from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.yandex.views import YandexAuth2Adapter
 from allauth.socialaccount.providers.vk.views import VKOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
@@ -24,15 +23,6 @@ class GoogleLogin(SocialLoginView):
     callback_url = os.getenv('GOOGLE_CALLBACK_URL', 
                            settings.SOCIAL_CALLBACK_URLS.get('google', 
                            'http://localhost:8000/accounts/google/login/callback/'))
-    serializer_class = CustomSocialLoginSerializer
-
-
-class YandexLogin(SocialLoginView):
-    adapter_class = YandexAuth2Adapter
-    client_class = OAuth2Client
-    callback_url = os.getenv('YANDEX_CALLBACK_URL', 
-                           settings.SOCIAL_CALLBACK_URLS.get('yandex', 
-                           'http://localhost:8000/accounts/yandex/login/callback/'))
     serializer_class = CustomSocialLoginSerializer
 
 
