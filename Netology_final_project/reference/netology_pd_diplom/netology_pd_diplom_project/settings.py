@@ -33,7 +33,6 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.yandex',
-    'allauth.socialaccount.providers.vk',
 ]
 
 LOCAL_APPS = [
@@ -55,7 +54,6 @@ ACCOUNT_ADAPTER = 'backend.api.adapters.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'backend.api.adapters.CustomSocialAccountAdapter'
 
 ACCOUNT_SIGNUP_FIELDS = ["email"]
-ACCOUNT_LOGIN_METHODS = {"email"}
 
 # ======== DJ REST AUTH ========
 REST_AUTH_REGISTER_SERIALIZER = "backend.api.serializers.user.CustomRegisterSerializer"
@@ -89,23 +87,6 @@ REST_FRAMEWORK = {
 
 # ======== SOCIAL ========
 SOCIALACCOUNT_PROVIDERS = {
-    'vk': {
-        'APP': {
-            'client_id': os.getenv('SOCIAL_AUTH_VK_CLIENT_ID'),
-            'secret': os.getenv('SOCIAL_AUTH_VK_SECRET'),
-            'key': ''
-        },
-        'SCOPE': ['email'],
-        'AUTH_PARAMS': {'v': '5.131'},
-    },
-    'yandex': {
-        'APP': {
-            'client_id': os.getenv('SOCIAL_AUTH_YANDEX_CLIENT_ID'),
-            'secret': os.getenv('SOCIAL_AUTH_YANDEX_SECRET'),
-            'key': ''
-        },
-        'SCOPE': ['login:email'],
-    },
     'github': {
         'APP': {
             'client_id': os.getenv('SOCIAL_AUTH_GITHUB_CLIENT_ID'),
@@ -125,16 +106,30 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
         'OAUTH_PKCE_ENABLED': True,
-    }
+    },
+    'yandex': {
+    'APP': {
+        'client_id': os.getenv('SOCIAL_AUTH_YANDEX_CLIENT_ID'),
+        'secret': os.getenv('SOCIAL_AUTH_YANDEX_SECRET'),
+        'key': ''
+    },
+    'SCOPE': ['login:email'],
+    'AUTH_PARAMS': {},
+},
+}
+
+SOCIAL_CALLBACK_URLS = {
+    'github': os.getenv('GITHUB_CALLBACK_URL', 'http://localhost:8000/accounts/github/login/callback/'),
+    'google': os.getenv('GOOGLE_CALLBACK_URL', 'http://localhost:8000/accounts/google/login/callback/'),
+    'yandex': os.getenv('YANDEX_CALLBACK_URL', 'http://localhost:8000/accounts/yandex/login/callback/'),
 }
 
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:8000')
-SOCIAL_CALLBACK_URLS = {
-    'github': f'{BASE_URL}/accounts/github/login/callback/',
-    'google': f'{BASE_URL}/accounts/google/login/callback/',
-    'yandex': f'{BASE_URL}/accounts/yandex/login/callback/',
-    'vk': f'{BASE_URL}/accounts/vk/login/callback/',
-}
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # ======== MIDDLEWARE ========
 MIDDLEWARE = [
