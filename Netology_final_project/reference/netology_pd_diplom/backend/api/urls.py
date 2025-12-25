@@ -58,5 +58,5 @@ urlpatterns = [
     path('admin/import/', AdminImportView.as_view(), name='admin-import'),
 
     # =======  Социальные сети ==============  
-    path('auth/social/', include('backend.api.urls_social')),
+    path('user/social/', include('backend.api.urls_social')),
 ]
