@@ -54,11 +54,73 @@ docker compose exec web python manage.py createsuperuser
 docker compose exec web python manage.py load_shop_data --all
 ```
 
-### 🌐 Эндпоинты для социальной аутентификации
+### 🔐 Социальная аутентификация (OAuth)
 
-GitHub: POST /api/v1/auth/social/github/
-Google: POST /api/v1/auth/social/google/
-VK: POST /api/v1/auth/social/vk/
+Проект поддерживает социальную аутентификацию через:
+
+GitHub
+
+Google
+
+Yandex
+
+Аутентификация реализована с использованием django-allauth и dj-rest-auth.
+
+### ⚠️ Важно: HTTPS для Yandex
+
+Яндекс строго требует HTTPS для redirect_uri.
+Локальный http://localhost не работает для OAuth Yandex.
+Для локальной разработки рекомендуется использовать HTTPS-туннель через Node.js.
+
+### 🧩 Локальная разработка с HTTPS
+
+Убедитесь, что Node.js установлен:
+
+node -v
+npm -v
+
+Установите localtunnel:
+```bash
+npm install -g localtunnel
+```
+
+Запустите HTTPS-туннель на порт 8000:
+```bash
+lt --port 8000 --subdomain mynetology
+```
+
+В результате будет доступен URL вида:
+
+https://mynetology.loca.lt
+
+
+Этот URL используется как BASE_URL и redirect_uri для Yandex OAuth.
+
+### 🔁 Настройка Yandex OAuth
+
+В .env:
+BASE_URL=https://mynetology.loca.lt
+SOCIAL_AUTH_YANDEX_CLIENT_ID=ваш_client_id
+SOCIAL_AUTH_YANDEX_SECRET=ваш_client_secret
+
+
+В панели разработчика Yandex:
+Redirect URI:
+
+https://mynetology.loca.lt/accounts/yandex/login/callback/
+
+
+Разрешения: login:email и доступ к имени, фамилии и email пользователя.
+Любое расхождение http/https или домена вызовет ошибку:
+400 redirect_uri does not match the Callback URL
+
+### 🌐 Доступные социальные входы
+
+GitHub: https://mynetology.loca.lt/accounts/github/login/
+
+Google: https://mynetology.loca.lt/accounts/google/login/
+
+Yandex: https://mynetology.loca.lt/accounts/yandex/login/
 
 ### 🌐 Доступные сервисы
 Сервис	                    URL

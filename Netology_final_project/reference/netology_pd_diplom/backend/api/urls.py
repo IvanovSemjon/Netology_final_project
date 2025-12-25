@@ -1,16 +1,27 @@
 from django.urls import path
-from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
+from django_rest_passwordreset.views import (
+    reset_password_request_token,
+    reset_password_confirm,
+)
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .views.auth import RegisterAccount, LoginAccount, AccountDetails, ConfirmAccount
+from .views.auth import (
+    RegisterAccount,
+    LoginAccount,
+    AccountDetails,
+    ConfirmAccount,
+)
 from .views.catalog import CategoryView, ShopView, ProductInfoView
 from .views.basket import BasketView
 from .views.contacts import ContactView
 from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
 from backend.api.views.admin_import import AdminImportView
-from backend.api.views.social import GitHubLogin, GoogleLogin, VKLogin
+
+# ✅ ТОЛЬКО актуальные соц-провайдеры
+from backend.api.views.social import GitHubLogin, GoogleLogin, YandexLogin
+
 
 @api_view(['GET'])
 def api_root(request):
@@ -28,16 +39,18 @@ def api_root(request):
         }
     })
 
+
 app_name = 'api'
+
 urlpatterns = [
     path('', api_root, name='api-root'),
-    
+
     # =======  Партнеры  ============
     path('partner/update/', PartnerUpdate.as_view(), name='partner-update'),
     path('partner/state/', PartnerState.as_view(), name='partner-state'),
     path('partner/orders/', PartnerOrders.as_view(), name='partner-orders'),
-    
-    # =======  Пользователи  ===============
+
+    # =======  Пользователи  ============
     path('user/register/', RegisterAccount.as_view(), name='user-register'),
     path('user/register/confirm/', ConfirmAccount.as_view(), name='user-register-confirm'),
     path('user/details/', AccountDetails.as_view(), name='user-details'),
@@ -45,21 +58,21 @@ urlpatterns = [
     path('user/login/', LoginAccount.as_view(), name='user-login'),
     path('user/password_reset/', reset_password_request_token, name='password-reset'),
     path('user/password_reset/confirm/', reset_password_confirm, name='password-reset-confirm'),
-    
-    # =======  Каталог ============
+
+    # =======  Каталог  ============
     path('categories/', CategoryView.as_view(), name='categories'),
     path('shops/', ShopView.as_view(), name='shops'),
     path('products/', ProductInfoView.as_view(), name='products'),
-    
-    # =======  Заказы ==============
+
+    # =======  Заказы  ============
     path('basket/', BasketView.as_view(), name='basket'),
     path('order/', OrderView.as_view(), name='order'),
-    
-    # =======  Админка ==============
+
+    # =======  Админка  ============
     path('admin/import/', AdminImportView.as_view(), name='admin-import'),
-    
-    # =======  Социальные сети ==============
+
+    # =======  Социальная авторизация  ============
     path('auth/github/', GitHubLogin.as_view(), name='github_login'),
     path('auth/google/', GoogleLogin.as_view(), name='google_login'),
-    path('auth/vk/', VKLogin.as_view(), name='vk_login'),
+    path('auth/yandex/', YandexLogin.as_view(), name='yandex_login'),
 ]
