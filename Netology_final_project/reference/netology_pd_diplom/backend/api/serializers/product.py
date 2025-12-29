@@ -27,8 +27,7 @@ class ProductParameterSerializer(serializers.ModelSerializer):
 class ProductInfoSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
     product_parameters = ProductParameterSerializer(read_only=True, many=True)
-    image = serializers.ImageField(required=False)  # добавили поле изображения
-
+    image = serializers.ImageField(required=False)
     class Meta:
         model = ProductInfo
         fields = (
@@ -40,6 +39,6 @@ class ProductInfoSerializer(serializers.ModelSerializer):
             "price",
             "price_rrc",
             "product_parameters",
-            "image",  # включаем фото
+            "image",
         )
         read_only_fields = ("id",)

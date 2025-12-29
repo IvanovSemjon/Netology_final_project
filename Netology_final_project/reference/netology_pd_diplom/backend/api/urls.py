@@ -1,10 +1,11 @@
 from django.urls import path, include
+from django.urls import path
 from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views.auth import RegisterAccount, AccountDetails, ConfirmAccount
+from .views.auth import RegisterAccount, ConfirmAccount
 from .views.catalog import CategoryView, ShopView, ProductInfoView
 from .views.basket import BasketView
 from .views.contacts import ContactView
@@ -65,3 +66,4 @@ urlpatterns = [
     # =======  Социальные сети ==============  
     path('user/social/', include('backend.api.urls_social')),
 ]
+

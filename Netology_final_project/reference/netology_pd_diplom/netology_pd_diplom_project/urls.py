@@ -1,20 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-
-    # REST API authentication - только кастомные эндпоинты
-    # path('api/v1/auth/', include('dj_rest_auth.urls')),  # удалить
-    # path('api/v1/auth/registration/', include('dj_rest_auth.registration.urls')),  # удалить
-    
-    # Social authentication (только кастомные)
-    # path('api/v1/auth/social/', include('backend.api.urls_social')),
 
     # allauth - веб-интерфейс
     path('accounts/', include('allauth.urls')),
