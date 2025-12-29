@@ -81,15 +81,24 @@ class ContactView(APIView):
         tags=['Контакты']
     )
     def delete(self, request, *args, **kwargs):
-        items = request.data.get("items")
-        if not isinstance(items, list) or not items:
-            return Response({"status": False, "errors": "items должен быть непустым массивом"}, status=status.HTTP_400_BAD_REQUEST)
-        query = Q()
-        for contact_id in items:
-            if isinstance(contact_id, int):
-                query |= Q(id=contact_id, user_id=request.user.id)
-        deleted_count = Contact.objects.filter(query).delete()[0]
-        return Response({"status": True, "deleted_objects": deleted_count}, status=status.HTTP_200_OK)
+        """
+        Удаление контакта по ID
+        """
+        serializer = ContactDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        items = serializer.validated_data["items"]
+
+        deleted_count, _ = Contact.objects.filter(
+            user_id=request.user.id,
+            id__in=items
+        ).delete()
+
+        return Response(
+            {"status": True, "deleted_objects": deleted_count},
+            status=status.HTTP_200_OK
+        )
+
 
     @extend_schema(
         summary="Обновление контакта",

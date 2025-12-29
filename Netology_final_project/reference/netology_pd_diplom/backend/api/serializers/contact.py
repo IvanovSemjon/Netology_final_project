@@ -53,3 +53,13 @@ class ContactSerializer(serializers.ModelSerializer):
         if not data.get("street") or not data.get("street").strip():
             raise serializers.ValidationError("Улица обязательна для заполнения")
         return data
+    
+
+class ContactDeleteRequestSerializer(serializers.Serializer):
+    """
+    Класс для удаления контактов по ID
+    """
+    items = serializers.ListField(
+        child=serializers.IntegerField(),
+        min_length=1
+    )
