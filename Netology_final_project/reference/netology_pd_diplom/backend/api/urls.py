@@ -11,6 +11,7 @@ from .views.contacts import ContactView
 from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
 from backend.api.views.admin_import import AdminImportView
+from backend.api.views.user import AccountDetailsWithAvatar
 
 @api_view(['GET'])
 def api_root(request):
@@ -40,8 +41,8 @@ urlpatterns = [
     # =======  Пользователи  ===============  
     path('user/register/', RegisterAccount.as_view(), name='user-register'),
     path('user/register/confirm/', ConfirmAccount.as_view(), name='user-register-confirm'),
-    path('user/details/', AccountDetails.as_view(), name='user-details'),
     path('user/contact/', ContactView.as_view(), name='user-contact'),
+    path('user/details/', AccountDetailsWithAvatar.as_view(), name='user-details'),
     path('user/password_reset/', reset_password_request_token, name='password-reset'),
     path('user/password_reset/confirm/', reset_password_confirm, name='password-reset-confirm'),
 

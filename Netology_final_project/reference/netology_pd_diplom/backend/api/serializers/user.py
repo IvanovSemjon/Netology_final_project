@@ -45,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
             "type",
             "contacts",
             "password",
+            "avatar",
         )
         read_only_fields = ("id",)
         extra_kwargs = {
@@ -152,6 +153,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             'position',
             'type',
             'is_active',
-            'contacts'
+            'contacts',
+            "avatar",
         )
         read_only_fields = ('email', 'is_active')

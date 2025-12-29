@@ -5,8 +5,12 @@ from typing import Any, Optional
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from versatileimagefield.fields import VersatileImageField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from backend.tasks.image_tasks import generate_user_avatar_thumbnails
 
 
 class UserManager(BaseUserManager):
@@ -83,6 +87,12 @@ class User(AbstractUser):
 
     password_reset_token = models.UUIDField(_("password reset token"), null=True, blank=True)
     password_reset_expires = models.DateTimeField(_("expires at"), null=True, blank=True)
+    avatar = VersatileImageField(
+        'avatar',
+        upload_to='avatars/',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         """
@@ -165,3 +175,8 @@ class Contact(models.Model):
         if self.house:
             base += f" {self.house}"
         return base
+    
+@receiver(post_save, sender=User)
+def user_avatar_post_save(sender, instance, **kwargs):
+    if instance.avatar:
+        generate_user_avatar_thumbnails.delay(instance.id)

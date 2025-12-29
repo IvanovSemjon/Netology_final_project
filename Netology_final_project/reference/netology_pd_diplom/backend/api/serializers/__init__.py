@@ -1,6 +1,6 @@
 # Импорты для обратной совместимости
 from .user import UserSerializer
-from .contact import ContactSerializer
+from .contact import ContactSerializer, ContactDeleteRequestSerializer
 from .category import CategorySerializer
 from .shop import ShopSerializer
 from .product import ProductSerializer, ProductParameterSerializer, ProductInfoSerializer
@@ -18,4 +18,5 @@ __all__ = [
     'OrderItemCreateSerializer',
     'OrderSerializer',
     'BasketItemWriteSerializer',
+    'ContactDeleteRequestSerializer',
 ]

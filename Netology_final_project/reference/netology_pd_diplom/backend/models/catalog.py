@@ -2,8 +2,12 @@
 Модели относящиеся к категориям.
 """
 from django.core.exceptions import ValidationError
+from versatileimagefield.fields import VersatileImageField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from backend.tasks.image_tasks import generate_product_image_thumbnails
 
 from .shops import Shop
 
@@ -71,6 +75,12 @@ class ProductInfo(models.Model):
     quantity = models.PositiveIntegerField(_("quantity"), default=0)
     price = models.DecimalField(_("price"), max_digits=10, decimal_places=2)
     price_rrc = models.DecimalField(_("price rrc"), max_digits=10, decimal_places=2)
+    image = VersatileImageField(
+        'image',
+        upload_to='products/',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         """
@@ -119,3 +129,9 @@ class ProductInfo(models.Model):
             raise ValidationError(_("Price must be > 0"))
         if self.price_rrc <= 0:
             raise ValidationError(_("RRC price must be > 0"))
+        
+
+@receiver(post_save, sender=ProductInfo)
+def product_image_post_save(sender, instance, **kwargs):
+    if instance.image:
+        generate_product_image_thumbnails.delay(instance.id)

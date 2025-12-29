@@ -33,6 +33,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.yandex',
+    'versatileimagefield',
 ]
 
 LOCAL_APPS = [
@@ -212,3 +213,23 @@ SIMPLE_JWT = {
     'USER_ID_CLAIMS': 'user_id',
 }
 
+# ======== AVATAR ========
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+VERSATILEIMAGEFIELD_SETTINGS = {
+    'cache_length': 2592000,  # 30 дней
+    'cache_name': 'versatileimagefield_cache',
+}
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'user_avatar': [
+        ('small', 'crop__100x100'),
+        ('medium', 'crop__300x300'),
+    ],
+    'product_image': [
+        ('small', 'crop__150x150'),
+        ('medium', 'resize_to_limit__800x800'),
+    ],
+}

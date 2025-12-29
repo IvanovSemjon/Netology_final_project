@@ -15,7 +15,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-
 class RegisterAccountRequestSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
@@ -24,10 +23,11 @@ class RegisterAccountRequestSerializer(serializers.Serializer):
     company = serializers.CharField()
     position = serializers.CharField()
     type = serializers.ChoiceField(
-        choices=User.USER_TYPE_CHOICES, 
-        required=False, 
+        choices=User.USER_TYPE_CHOICES,
+        required=False,
         default='buyer'
-        )
+    )
+    avatar = serializers.ImageField(required=False, allow_null=True)
 
 
 class RegisterAccountResponseSerializer(serializers.Serializer):
@@ -62,14 +62,9 @@ class LoginAccountResponseSerializer(serializers.Serializer):
 
 
 class RegisterAccount(APIView):
-    """
-    Регистрация пользователей.
-    """
-
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle, AnonRateThrottle, ScopedRateThrottle]
     throttle_scope = 'account'
-
 
     @extend_schema(
         summary="Регистрация пользователя",
@@ -82,45 +77,33 @@ class RegisterAccount(APIView):
         tags=["Пользователи"],
     )
     def post(self, request, *args, **kwargs):
-        required_fields = {
-            "first_name",
-            "last_name",
-            "email",
-            "password",
-            "company",
-            "position",
-        }
+        required_fields = {"first_name", "last_name", "email", "password", "company", "position"}
         if not required_fields.issubset(request.data):
-            return Response(
-                {"Status": False, "Errors": "Не указаны все необходимые аргументы"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"Status": False, "Errors": "Не указаны все необходимые аргументы"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         email = request.data["email"].lower()
-
         if User.objects.filter(email=email).exists():
-            return Response(
-                {"Status": False, "Errors": {"email": ["Пользователь с таким email уже существует"]}},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"Status": False, "Errors": {"email": ["Пользователь с таким email уже существует"]}},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
             validate_password(request.data["password"])
         except Exception as password_error:
-            return Response(
-                {"Status": False, "Errors": {"password": list(password_error)}},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"Status": False, "Errors": {"password": list(password_error)}},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        user_serializer = UserSerializer(data=request.data)
+        # Подготовка данных для сериализатора, включая avatar
+        serializer_data = request.data.copy()
+        if request.FILES.get("avatar"):
+            serializer_data["avatar"] = request.FILES["avatar"]
+
+        user_serializer = UserSerializer(data=serializer_data)
         if not user_serializer.is_valid():
-            return Response(
-                {"Status": False, "Errors": user_serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"Status": False, "Errors": user_serializer.errors},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         user = user_serializer.save()
-
         user.set_password(request.data["password"])
         user.is_active = False
         user.save()
@@ -128,20 +111,13 @@ class RegisterAccount(APIView):
         ConfirmEmailToken.objects.create(user=user)
         send_confirmation_email_task.delay(user.id)
 
-        return Response(
-            {
-                "Status": True,
-                "Message": f"Пользователь {user.first_name} {user.last_name} создан. Проверьте email для подтверждения регистрации.",
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response({
+            "Status": True,
+            "Message": f"Пользователь {user.first_name} {user.last_name} создан. Проверьте email для подтверждения регистрации.",
+        }, status=status.HTTP_200_OK)
 
 
 class ConfirmAccount(APIView):
-    """
-    Подтверждение email.
-    """
-
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     throttle_scope = 'account'
@@ -156,39 +132,24 @@ class ConfirmAccount(APIView):
     def post(self, request, *args, **kwargs):
         required_fields = {"email", "token"}
         if not required_fields.issubset(request.data):
-            return Response(
-                {"Status": False, "Errors": "Не указаны все необходимые аргументы"},
-                status=400,
-            )
+            return Response({"Status": False, "Errors": "Не указаны все необходимые аргументы"},
+                            status=400)
 
         try:
-            token = ConfirmEmailToken.objects.get(
-                user__email=request.data["email"], key=request.data["token"]
-            )
+            token = ConfirmEmailToken.objects.get(user__email=request.data["email"], key=request.data["token"])
         except ConfirmEmailToken.DoesNotExist:
-            return Response(
-                {"Status": False, "Errors": "Неверный токен или email"}, status=400
-            )
+            return Response({"Status": False, "Errors": "Неверный токен или email"}, status=400)
 
         user = token.user
         user.is_active = True
         user.save()
         token.delete()
 
-        return Response(
-            {
-                "Status": True,
-                "Message": "Email успешно подтверждён. Теперь вы можете войти в систему.",
-            },
-            status=200,
-        )
+        return Response({"Status": True, "Message": "Email успешно подтверждён. Теперь вы можете войти в систему."},
+                        status=200)
 
 
 class LoginAccount(APIView):
-    """
-    Авторизация пользователей.
-    """
-
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     throttle_scope = 'account'
@@ -203,35 +164,18 @@ class LoginAccount(APIView):
     def post(self, request, *args, **kwargs):
         required_fields = {"email", "password"}
         if not required_fields.issubset(request.data):
-            return Response(
-                {"Status": False, "Errors": "Не указаны все необходимые аргументы"},
-                status=400,
-            )
+            return Response({"Status": False, "Errors": "Не указаны все необходимые аргументы"}, status=400)
 
-        user = authenticate(
-            request, username=request.data["email"], password=request.data["password"]
-        )
+        user = authenticate(request, username=request.data["email"], password=request.data["password"])
         if user and user.is_active:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response(
-                {
-                    "Status": True,
-                    "Token": token.key,
-                    "Message": "Запишите ваш токен для работы с API",
-                },
-                status=200,
-            )
+            return Response({"Status": True, "Token": token.key, "Message": "Запишите ваш токен для работы с API"},
+                            status=200)
 
-        return Response(
-            {"Status": False, "Errors": "Не удалось авторизовать"}, status=400
-        )
+        return Response({"Status": False, "Errors": "Не удалось авторизовать"}, status=400)
 
 
 class AccountDetails(APIView):
-    """
-    Управление данными аккаунта.
-    """
-
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle]
     throttle_scope = 'account'
@@ -248,7 +192,7 @@ class AccountDetails(APIView):
 
     @extend_schema(
         summary="Изменение данных пользователя",
-        description="Изменение данных пользователя, включая возможность смены пароля",
+        description="Изменение данных пользователя, включая возможность смены пароля и аватара",
         request=UserSerializer,
         responses={200: {"Status": True}, 400: ErrorResponseSerializer},
         tags=["Пользователи"],
@@ -258,13 +202,14 @@ class AccountDetails(APIView):
             try:
                 validate_password(request.data["password"])
             except Exception as password_error:
-                return Response(
-                    {"Status": False, "Errors": {"password": list(password_error)}},
-                    status=400,
-                )
+                return Response({"Status": False, "Errors": {"password": list(password_error)}}, status=400)
             request.user.set_password(request.data["password"])
 
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer_data = request.data.copy()
+        if request.FILES.get("avatar"):
+            serializer_data["avatar"] = request.FILES["avatar"]
+
+        serializer = UserSerializer(request.user, data=serializer_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"Status": True}, status=200)
