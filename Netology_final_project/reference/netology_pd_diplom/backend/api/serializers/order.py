@@ -62,3 +62,12 @@ class OrderSerializer(serializers.ModelSerializer):
             "contact",
         )
         read_only_fields = ("id",)
+
+
+class BasketItemWriteSerializer(serializers.Serializer):
+    """
+    Добавление товаров в корзину.
+    """
+    product_info = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+

@@ -3,27 +3,27 @@ Views для корзины заказов.
 """
 
 from collections import defaultdict
-from django.db import IntegrityError
 
-from backend.api.serializers import OrderItemSerializer, OrderSerializer
-from backend.models import Order, OrderItem, ProductInfo
-from drf_spectacular.utils import extend_schema
-from django.db.models import F, Sum, Q
+from django.db import IntegrityError
+from django.db.models import F, Sum
 from rest_framework import serializers
-from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
+
+from backend.models import Order, OrderItem, ProductInfo
+from backend.api.serializers import OrderSerializer
 
 
-class BasketItemSerializer(serializers.Serializer):
-    id = serializers.IntegerField(required=False)
+class BasketItemWriteSerializer(serializers.Serializer):
     product_info = serializers.IntegerField()
-    quantity = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
 
 
 class BasketAddRequestSerializer(serializers.Serializer):
-    items = BasketItemSerializer(many=True)
+    items = BasketItemWriteSerializer(many=True)
 
 
 class BasketAddResponseSerializer(serializers.Serializer):
@@ -32,8 +32,13 @@ class BasketAddResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
 
 
+class BasketUpdateItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+
+
 class BasketUpdateRequestSerializer(serializers.Serializer):
-    items = BasketItemSerializer(many=True)
+    items = BasketUpdateItemSerializer(many=True)
 
 
 class BasketUpdateResponseSerializer(serializers.Serializer):
@@ -42,7 +47,10 @@ class BasketUpdateResponseSerializer(serializers.Serializer):
 
 
 class BasketDeleteRequestSerializer(serializers.Serializer):
-    items = serializers.ListField(child=serializers.IntegerField())
+    items = serializers.ListField(
+        child=serializers.IntegerField(),
+        help_text="Список product_info id"
+    )
 
 
 class BasketDeleteResponseSerializer(serializers.Serializer):
@@ -62,20 +70,18 @@ class BasketView(APIView):
 
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, ScopedRateThrottle]
-    throttle_scope = 'basket'
+    throttle_scope = "basket"
 
+    # ---------- GET ----------
     @extend_schema(
         summary="Просмотр корзины",
-        description="Получение всех товаров текущей корзины пользователя",
+        description="Получение текущей корзины пользователя",
         responses=OrderSerializer(many=True),
         tags=["Корзина"],
     )
-    def get(self, request, *args, **kwargs):
-        """
-        Просмотр корзины.
-        """
+    def get(self, request):
         basket = (
-            Order.objects.filter(user_id=request.user.id, state="basket")
+            Order.objects.filter(user=request.user, state="basket")
             .prefetch_related(
                 "ordered_items__product_info__product__category",
                 "ordered_items__product_info__product_parameters__parameter",
@@ -88,127 +94,123 @@ class BasketView(APIView):
             )
             .distinct()
         )
+
         serializer = OrderSerializer(basket, many=True)
         return Response(serializer.data)
 
+    # ---------- POST ----------
     @extend_schema(
         summary="Добавление товаров в корзину",
-        description="Добавляет товары в корзину пользователя",
         request=BasketAddRequestSerializer,
         responses={201: BasketAddResponseSerializer, 400: ErrorResponseSerializer},
         tags=["Корзина"],
     )
-    def post(self, request, *args, **kwargs):
-        """
-        Добавление товаров в корзину.
-        """
-        items = request.data.get("items")
-        if not isinstance(items, list) or not items:
-            return Response(
-                {"status": False, "errors": "items должен быть непустым массивом"},
-                status=400,
-            )
+    def post(self, request):
+        serializer = BasketItemWriteSerializer(
+            data=request.data.get("items"),
+            many=True
+        )
+        serializer.is_valid(raise_exception=True)
 
-        basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
-        objects_created = 0
+        basket, _ = Order.objects.get_or_create(
+            user=request.user,
+            state="basket"
+        )
 
-        for order_item in items:
-            order_item["order"] = basket.id
-            serializer = OrderItemSerializer(data=order_item)
-            if serializer.is_valid():
-                try:
-                    serializer.save()
-                    objects_created += 1
-                except IntegrityError as error:
-                    return Response({"status": False, "errors": str(error)}, status=400)
-            else:
-                return Response(
-                    {"status": False, "errors": serializer.errors}, status=400
-                )
+        created = 0
+        shop_summary = defaultdict(int)
 
-        product_ids = [item["product_info"] for item in items]
+        product_ids = [i["product_info"] for i in serializer.validated_data]
         products = ProductInfo.objects.select_related("shop").filter(id__in=product_ids)
         products_map = {p.id: p for p in products}
 
-        shop_items = defaultdict(int)
-        for item in items:
-            product_info = products_map.get(item["product_info"])
-            if product_info:
-                shop_items[product_info.shop.name] += item["quantity"]
+        try:
+            for item in serializer.validated_data:
+                product = products_map.get(item["product_info"])
+                if not product:
+                    continue
 
-        message_parts = [
-            f"{qty} товар{'а' if qty != 1 else ''} из магазина {shop}"
-            for shop, qty in shop_items.items()
-        ]
-        summary = "В заказ добавлено: " + ", ".join(message_parts)
+                OrderItem.objects.create(
+                    order=basket,
+                    product_info=product,
+                    quantity=item["quantity"],
+                )
+
+                created += 1
+                shop_summary[product.shop.name] += item["quantity"]
+
+        except IntegrityError as e:
+            return Response(
+                {"status": False, "errors": str(e)},
+                status=400
+            )
+
+        message = ", ".join(
+            f"{qty} товар(ов) из магазина {shop}"
+            for shop, qty in shop_summary.items()
+        )
 
         return Response(
-            {"status": True, "created_objects": objects_created, "message": summary},
+            {
+                "status": True,
+                "created_objects": created,
+                "message": f"Добавлено в корзину: {message}",
+            },
             status=201,
         )
 
-
-
+    # ---------- PUT ----------
     @extend_schema(
-        summary="Удаление товаров из корзины",
-        description="Удаляет указанные товары из корзины по product_info",
-        request=BasketDeleteRequestSerializer,
-        responses={200: BasketDeleteResponseSerializer, 400: ErrorResponseSerializer},
+        summary="Изменение количества товаров",
+        request=BasketUpdateRequestSerializer,
+        responses={200: BasketUpdateResponseSerializer},
         tags=["Корзина"],
     )
-    def delete(self, request, *args, **kwargs):
-        """
-        Удаление товаров из корзины.
-        """
-        items = request.data.get("items")
-        if not items:
-            return Response(
-                {"status": False, "errors": "Не указаны объекты для удаления"},
-                status=400,
-            )
+    def put(self, request):
+        items = request.data.get("items", [])
+        updated = 0
 
-        if isinstance(items, str):
-            items = items.split(",")
-
-        basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
-        deleted_count = OrderItem.objects.filter(order=basket, product_info_id__in=items).delete()[0]
-
-        if deleted_count > 0:
-            return Response({"status": True, "deleted_objects": deleted_count})
-
-        return Response(
-            {"status": False, "errors": "Нет корректных объектов для удаления"},
-            status=400,
+        basket, _ = Order.objects.get_or_create(
+            user=request.user,
+            state="basket"
         )
 
+        for item in items:
+            updated += OrderItem.objects.filter(
+                order=basket,
+                id=item["id"]
+            ).update(quantity=item["quantity"])
 
+        return Response(
+            {"status": True, "updated_objects": updated}
+        )
+
+    # ---------- DELETE ----------
     @extend_schema(
-        summary="Обновление количества товаров в корзине",
-        description="Обновляет количество товаров в корзине",
-        request=BasketUpdateRequestSerializer,
-        responses={200: BasketUpdateResponseSerializer, 400: ErrorResponseSerializer},
+        summary="Удаление товаров из корзины",
+        request=BasketDeleteRequestSerializer,
+        responses={200: BasketDeleteResponseSerializer},
         tags=["Корзина"],
     )
-    def put(self, request, *args, **kwargs):
-        """
-        Изменение количества товаров в корзине.
-        """
-        items = request.data.get("items")
-        if not isinstance(items, list) or not items:
+    def delete(self, request):
+        product_ids = request.data.get("items", [])
+
+        if not product_ids:
             return Response(
-                {"status": False, "errors": "items должен быть непустым массивом"},
-                status=400,
+                {"status": False, "errors": "items не может быть пустым"},
+                status=400
             )
 
-        basket, _ = Order.objects.get_or_create(user_id=request.user.id, state="basket")
-        objects_updated = 0
+        basket, _ = Order.objects.get_or_create(
+            user=request.user,
+            state="basket"
+        )
 
-        for item in items:
-            item_id = item.get("id")
-            quantity = item.get("quantity")
-            if isinstance(item_id, int) and isinstance(quantity, int):
-                objects_updated += OrderItem.objects.filter(
-                    order=basket, id=item_id
-                ).update(quantity=quantity)
+        deleted, _ = OrderItem.objects.filter(
+            order=basket,
+            product_info_id__in=product_ids
+        ).delete()
 
-        return Response({"status": True, "updated_objects": objects_updated})
+        return Response(
+            {"status": True, "deleted_objects": deleted}
+        )

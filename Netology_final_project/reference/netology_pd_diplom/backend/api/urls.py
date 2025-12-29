@@ -2,8 +2,9 @@ from django.urls import path, include
 from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views.auth import RegisterAccount, LoginAccount, AccountDetails, ConfirmAccount
+from .views.auth import RegisterAccount, AccountDetails, ConfirmAccount
 from .views.catalog import CategoryView, ShopView, ProductInfoView
 from .views.basket import BasketView
 from .views.contacts import ContactView
@@ -20,8 +21,8 @@ def api_root(request):
             'shops': '/api/v1/shops/',
             'products': '/api/v1/products/',
             'user_register': '/api/v1/user/register/',
-            'user_login': '/api/v1/user/login/',
-            'social_auth': '/api/v1/auth/social/',
+            'user_jwt_login': '/api/v1/user/jwt/login/',
+            'social_auth': '/api/v1/user/social/',
             'basket': '/api/v1/basket/',
             'order': '/api/v1/order/',
         }
@@ -41,9 +42,12 @@ urlpatterns = [
     path('user/register/confirm/', ConfirmAccount.as_view(), name='user-register-confirm'),
     path('user/details/', AccountDetails.as_view(), name='user-details'),
     path('user/contact/', ContactView.as_view(), name='user-contact'),
-    path('user/login/', LoginAccount.as_view(), name='user-login'),
     path('user/password_reset/', reset_password_request_token, name='password-reset'),
     path('user/password_reset/confirm/', reset_password_confirm, name='password-reset-confirm'),
+
+    # JWT authentication
+    path('user/jwt/login/', TokenObtainPairView.as_view(), name='jwt-login'),
+    path('user/jwt/refresh/', TokenRefreshView.as_view(), name='jwt-refresh'),
 
     # =======  Каталог ============  
     path('categories/', CategoryView.as_view(), name='categories'),

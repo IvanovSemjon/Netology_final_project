@@ -4,7 +4,7 @@ from .contact import ContactSerializer
 from .category import CategorySerializer
 from .shop import ShopSerializer
 from .product import ProductSerializer, ProductParameterSerializer, ProductInfoSerializer
-from .order import OrderItemSerializer, OrderItemCreateSerializer, OrderSerializer
+from .order import OrderItemSerializer, OrderItemCreateSerializer, OrderSerializer, BasketItemWriteSerializer
 
 __all__ = [
     'UserSerializer',
@@ -16,5 +16,6 @@ __all__ = [
     'ProductInfoSerializer',
     'OrderItemSerializer',
     'OrderItemCreateSerializer',
-    'OrderSerializer'
+    'OrderSerializer',
+    'BasketItemWriteSerializer',
 ]

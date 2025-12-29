@@ -49,21 +49,12 @@ docker compose exec web python manage.py migrate
 docker compose exec web python manage.py createsuperuser
 ```
 
-### 5. (Опционально) Загрузка тестовых данных
-```bash
-docker compose exec web python manage.py load_shop_data --all
-```
-
 ### 🔐 Социальная аутентификация (OAuth)
 
 Проект поддерживает социальную аутентификацию через:
-
-GitHub
-
-Google
-
-Yandex
-
+✅ GitHub
+✅ Google
+✅ Yandex
 Аутентификация реализована с использованием django-allauth и dj-rest-auth.
 
 ### ⚠️ Важно: HTTPS для Yandex
@@ -116,11 +107,11 @@ https://mynetology.loca.lt/accounts/yandex/login/callback/
 
 ### 🌐 Доступные социальные входы
 
-GitHub: https://mynetology.loca.lt/accounts/github/login/
+✅ GitHub: https://mynetology.loca.lt/accounts/github/login/
 
-Google: https://mynetology.loca.lt/accounts/google/login/
+✅ Google: https://mynetology.loca.lt/accounts/google/login/
 
-Yandex: https://mynetology.loca.lt/accounts/yandex/login/
+✅ Yandex: https://mynetology.loca.lt/accounts/yandex/login/
 
 ### 🌐 Доступные сервисы
 Сервис	                    URL

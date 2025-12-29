@@ -10,6 +10,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 
 class RegisterAccountRequestSerializer(serializers.Serializer):
@@ -19,6 +23,11 @@ class RegisterAccountRequestSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
     company = serializers.CharField()
     position = serializers.CharField()
+    type = serializers.ChoiceField(
+        choices=User.USER_TYPE_CHOICES, 
+        required=False, 
+        default='buyer'
+        )
 
 
 class RegisterAccountResponseSerializer(serializers.Serializer):
@@ -87,6 +96,14 @@ class RegisterAccount(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        email = request.data["email"].lower()
+
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"Status": False, "Errors": {"email": ["Пользователь с таким email уже существует"]}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             validate_password(request.data["password"])
         except Exception as password_error:
@@ -103,6 +120,7 @@ class RegisterAccount(APIView):
             )
 
         user = user_serializer.save()
+
         user.set_password(request.data["password"])
         user.is_active = False
         user.save()

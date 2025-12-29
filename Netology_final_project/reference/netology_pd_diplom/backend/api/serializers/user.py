@@ -24,7 +24,10 @@ class UserSerializer(serializers.ModelSerializer):
     contacts = ContactSerializer(read_only=True, many=True)
     password = serializers.CharField(write_only=True, required=False)
     email = serializers.EmailField(required=True)
-    type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES)
+    type = serializers.ChoiceField(
+        choices=User.USER_TYPE_CHOICES, 
+        required=False,default='buyer'
+        )
 
     class Meta:
         """

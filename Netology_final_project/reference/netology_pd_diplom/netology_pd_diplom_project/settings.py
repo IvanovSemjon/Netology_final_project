@@ -63,11 +63,10 @@ JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-token'
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "backend.api.exceptions.custom_exception_handler",
@@ -84,6 +83,7 @@ REST_FRAMEWORK = {
         "dj_rest_auth": "10/min",
     }
 }
+
 
 # ======== SOCIAL ========
 USE_X_FORWARDED_HOST = True
