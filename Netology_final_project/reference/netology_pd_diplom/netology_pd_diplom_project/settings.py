@@ -6,7 +6,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 # ======================================================
-# BASE
+# Основа
 # ======================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,7 +17,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["*"]
 
 # ======================================================
-# SENTRY
+# Логирование
 # ======================================================
 
 SENTRY_DSN = os.getenv(
@@ -33,7 +33,7 @@ sentry_sdk.init(
 )
 
 # ======================================================
-# APPLICATIONS
+# Приложения
 # ======================================================
 
 DJANGO_APPS = [
@@ -60,6 +60,9 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.yandex",
     "versatileimagefield",
+    "cacheops",
+    "corsheaders",
+    "silk",
 ]
 
 LOCAL_APPS = [
@@ -69,7 +72,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # ======================================================
-# AUTH
+# Аутентификация
 # ======================================================
 
 AUTH_USER_MODEL = "backend.User"
@@ -91,7 +94,7 @@ LOGOUT_REDIRECT_URL = "/"
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # ======================================================
-# REST / JWT
+# Токены
 # ======================================================
 
 REST_USE_JWT = True
@@ -140,7 +143,7 @@ SIMPLE_JWT = {
 }
 
 # ======================================================
-# SOCIAL AUTH
+# Социальная авторизация
 # ======================================================
 
 USE_X_FORWARDED_HOST = True
@@ -174,12 +177,16 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # ======================================================
-# MIDDLEWARE
+# Мидлварь
 # ======================================================
 
 MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # 'cacheops.middleware.CacheOpsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -188,15 +195,21 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://mynetology.loca.lt",
+    "http://localhost:8000",
+]
 # ======================================================
-# URLS / WSGI
+# Урлы
 # ======================================================
 
 ROOT_URLCONF = "netology_pd_diplom_project.urls"
 WSGI_APPLICATION = "netology_pd_diplom_project.wsgi.application"
 
 # ======================================================
-# TEMPLATES
+# Шаблоны
 # ======================================================
 
 TEMPLATES = [
@@ -216,7 +229,7 @@ TEMPLATES = [
 ]
 
 # ======================================================
-# DATABASE
+# БД
 # ======================================================
 
 DATABASES = {
@@ -227,7 +240,7 @@ DATABASES = {
 }
 
 # ======================================================
-# STATIC / MEDIA
+# Статика
 # ======================================================
 
 STATIC_URL = "/static/"
@@ -237,7 +250,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # ======================================================
-# CELERY
+# Селери
 # ======================================================
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
@@ -251,14 +264,14 @@ if os.name == "nt":
     CELERYD_POOL = "solo"
 
 # ======================================================
-# EMAIL
+# Почта
 # ======================================================
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
 
 # ======================================================
-# SPECTACULAR
+# Документация
 # ======================================================
 
 SPECTACULAR_SETTINGS = {
@@ -279,7 +292,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ======================================================
-# IMAGES
+# Аватарки
 # ======================================================
 
 VERSATILEIMAGEFIELD_SETTINGS = {
@@ -297,3 +310,43 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
         ("medium", "resize_to_limit__800x800"),
     ],
 }
+
+# ======================================================
+# Кеширование
+# ======================================================
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+CACHEOPS_REDIS = {
+    'host': 'redis',
+    'port': 6379,
+    'db': 1,
+    'socket_timeout': 3,
+}
+
+CACHEOPS_DEFAULTS = {
+    'timeout': 60 * 15,
+}
+
+CACHEOPS = {
+    'auth.user': {'ops': 'get', 'timeout': 60*15},
+    'backend.productinfo': {'ops': 'all', 'timeout': 60*5},
+}
+
+CACHEOPS_ENABLED = os.getenv("CACHEOPS_ENABLED", "True") == "True"
+
+# ======================================================
+# Силк
+# ======================================================
+SILKY_PYTHON_PROFILER = True
+SILKY_AUTHENTICATION = True  # только авторизованные пользователи
+SILKY_AUTHORISATION = True
+SILKY_MAX_REQUEST_BODY_SIZE = -1  # чтобы профилировать любые размеры запросов

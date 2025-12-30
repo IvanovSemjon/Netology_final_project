@@ -25,4 +25,12 @@ urlpatterns = [
 
     # Главная страница
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Silk только для локальной разработки
+if settings.DEBUG:
+    urlpatterns += [
+        path('silk/', include('silk.urls', namespace='silk')),
+    ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
