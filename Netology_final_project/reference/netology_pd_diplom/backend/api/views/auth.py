@@ -11,6 +11,8 @@ from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle, Anon
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
 
@@ -65,17 +67,16 @@ class RegisterAccount(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle, AnonRateThrottle, ScopedRateThrottle]
     throttle_scope = 'account'
+    parser_classes = [MultiPartParser, FormParser]  # <- вот это важно
 
     @extend_schema(
         summary="Регистрация пользователя",
-        description="Создает нового пользователя и отправляет подтверждение на email",
+        description="Создание нового пользователя и отправка письма для подтверждения email",
         request=RegisterAccountRequestSerializer,
-        responses={
-            200: RegisterAccountResponseSerializer,
-            400: ErrorResponseSerializer,
-        },
+        responses={200: RegisterAccountResponseSerializer, 400: ErrorResponseSerializer},
         tags=["Пользователи"],
     )
+
     def post(self, request, *args, **kwargs):
         required_fields = {"first_name", "last_name", "email", "password", "company", "position"}
         if not required_fields.issubset(request.data):
@@ -93,7 +94,7 @@ class RegisterAccount(APIView):
             return Response({"Status": False, "Errors": {"password": list(password_error)}},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Подготовка данных для сериализатора, включая avatar
+        # сериализатор
         serializer_data = request.data.copy()
         if request.FILES.get("avatar"):
             serializer_data["avatar"] = request.FILES["avatar"]
@@ -108,12 +109,12 @@ class RegisterAccount(APIView):
         user.is_active = False
         user.save()
 
-        ConfirmEmailToken.objects.create(user=user)
+        token_obj = ConfirmEmailToken.objects.create(user=user)
         send_confirmation_email_task.delay(user.id)
 
         return Response({
             "Status": True,
-            "Message": f"Пользователь {user.first_name} {user.last_name} создан. Проверьте email для подтверждения регистрации.",
+            "Message": f"Пользователь {user.first_name} {user.last_name} создан. Проверьте email для подтверждения регистрации."
         }, status=status.HTTP_200_OK)
 
 
@@ -123,8 +124,8 @@ class ConfirmAccount(APIView):
     throttle_scope = 'account'
 
     @extend_schema(
-        summary="Подтверждение email",
-        description="Подтверждает email пользователя по токену",
+        summary="Подтверждение email пользователя",
+        description="Подтверждает email по токену, отправленному на почту при регистрации",
         request=ConfirmAccountRequestSerializer,
         responses={200: ConfirmAccountResponseSerializer, 400: ErrorResponseSerializer},
         tags=["Пользователи"],
@@ -133,12 +134,11 @@ class ConfirmAccount(APIView):
         required_fields = {"email", "token"}
         if not required_fields.issubset(request.data):
             return Response({"Status": False, "Errors": "Не указаны все необходимые аргументы"},
-                            status=400)
-
+                            status=status.HTTP_400_BAD_REQUEST)
         try:
             token = ConfirmEmailToken.objects.get(user__email=request.data["email"], key=request.data["token"])
         except ConfirmEmailToken.DoesNotExist:
-            return Response({"Status": False, "Errors": "Неверный токен или email"}, status=400)
+            return Response({"Status": False, "Errors": "Неверный токен или email"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = token.user
         user.is_active = True
@@ -146,7 +146,7 @@ class ConfirmAccount(APIView):
         token.delete()
 
         return Response({"Status": True, "Message": "Email успешно подтверждён. Теперь вы можете войти в систему."},
-                        status=200)
+                        status=status.HTTP_200_OK)
 
 
 class LoginAccount(APIView):
@@ -214,3 +214,27 @@ class AccountDetails(APIView):
             serializer.save()
             return Response({"Status": True}, status=200)
         return Response({"Status": False, "Errors": serializer.errors}, status=400)
+
+User = get_user_model()
+
+class UserLoginView(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_scope = 'account'
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not email or not password:
+            return Response({"Status": False, "Errors": "Email and password required"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, username=email, password=password)
+
+        if not user or not user.is_active:
+            return Response({"Status": False}, status=status.HTTP_401_UNAUTHORIZED)
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"Status": True, "Token": token.key, "Message": "Вы успешно вошли в систему"},
+                        status=status.HTTP_200_OK)

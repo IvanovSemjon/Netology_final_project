@@ -13,6 +13,8 @@ from .views.orders import OrderView
 from .views.partners import PartnerUpdate, PartnerState, PartnerOrders
 from backend.api.views.admin_import import AdminImportView
 from backend.api.views.user import AccountDetailsWithAvatar
+from .views.auth import UserLoginView
+from .views.jwt_auth import MyTokenObtainPairView
 
 @api_view(['GET'])
 def api_root(request):
@@ -48,7 +50,8 @@ urlpatterns = [
     path('user/password_reset/confirm/', reset_password_confirm, name='password-reset-confirm'),
 
     # JWT authentication
-    path('user/jwt/login/', TokenObtainPairView.as_view(), name='jwt-login'),
+    path('user/login/', UserLoginView.as_view(), name='user-login'),
+    path('user/jwt/login/', MyTokenObtainPairView.as_view(), name='jwt-login'),
     path('user/jwt/refresh/', TokenRefreshView.as_view(), name='jwt-refresh'),
 
     # =======  Каталог ============  

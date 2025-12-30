@@ -16,7 +16,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
 
     # Основное API
-    path('api/v1/', include(('backend.api.urls', 'backend'), namespace='backend')),
+    path('api/v1/', include(('backend.api.urls', 'api'), namespace='api')),
+
 
     # OpenAPI documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
